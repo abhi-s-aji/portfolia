@@ -36,6 +36,50 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val projectRepo = ProjectRepository(db.projectDao())
     private val profileRepo = ProfileRepository(db.profileDao())
 
+    init {
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            // Seed profile if empty
+            if (profileRepo.getProfileSnapshot() == null) {
+                profileRepo.saveProfile(
+                    UserProfileEntity(
+                        id = 1L,
+                        fullName = "Abhi S Aji",
+                        headline = "Android & Web Developer",
+                        bio = "Passionate developer building modern mobile and web applications with beautiful interfaces and clean architecture.",
+                        email = "developer@example.com",
+                        githubHandle = "abhi-s-aji",
+                        linkedinHandle = "abhi-s-aji"
+                    )
+                )
+            }
+            // Seed projects if empty
+            if (projectRepo.getAllProjectsSnapshot().isEmpty()) {
+                projectRepo.insertProject(
+                    ProjectEntity(
+                        title = "Portfolia App",
+                        subtitle = "Developer Portfolio Android App",
+                        description = "A premium Android application designed to showcase a developer's projects and resume. Built entirely with Jetpack Compose, Room database, and Material Design 3.",
+                        category = "Android",
+                        tags = listOf("Kotlin", "Jetpack Compose", "Room", "Material 3", "MVVM"),
+                        githubUrl = "https://github.com/abhi-s-aji/portfolia",
+                        isFeatured = true
+                    )
+                )
+                projectRepo.insertProject(
+                    ProjectEntity(
+                        title = "Portfolia Web Portal",
+                        subtitle = "Portfolio Web Application",
+                        description = "A modern web portal built using React and Tailwind CSS, featuring smooth animations, responsive layout, and direct integration with GitHub API.",
+                        category = "Web",
+                        tags = listOf("React", "TypeScript", "Tailwind CSS", "Vite"),
+                        githubUrl = "https://github.com/abhi-s-aji/portfolia-web",
+                        isFeatured = false
+                    )
+                )
+            }
+        }
+    }
+
     private val _searchQuery = MutableStateFlow("")
     private val _selectedCategory = MutableStateFlow("All")
 
