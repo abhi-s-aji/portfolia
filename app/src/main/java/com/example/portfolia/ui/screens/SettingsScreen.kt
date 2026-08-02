@@ -1,11 +1,13 @@
 package com.example.portfolia.ui.screens
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -36,7 +38,7 @@ fun SettingsScreen(
         containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
-                title = { Text("App Customization", color = Color.White, fontWeight = FontWeight.Bold) },
+                title = { Text("Customization", color = Color.White, fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
             )
         }
@@ -46,10 +48,10 @@ fun SettingsScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            // GLASSMORPHISM SWITCH CARD
+            // GLASSMORPHISM TOGGLE
             AppleGlassCard(isGlassmorphism = isGlassmorphism, intensity = intensity) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -57,13 +59,8 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(text = "Glassmorphism 2.0 Effect", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = Color.White)
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = "Translucent frosted-glass cards with ambient gradient glows.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.White.copy(alpha = 0.7f)
-                        )
+                        Text("Translucent Surfaces", style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.SemiBold)
+                        Text("Enable frosted specular surfaces with ambient illumination.", style = MaterialTheme.typography.bodySmall, color = Color(0xFF989A9C))
                     }
                     Switch(
                         checked = isGlassmorphism,
@@ -71,47 +68,46 @@ fun SettingsScreen(
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = Color.White,
                             checkedTrackColor = accent.primary,
-                            uncheckedThumbColor = Color(0xFF8E8E93),
-                            uncheckedTrackColor = Color.White.copy(alpha = 0.2f)
+                            uncheckedTrackColor = Color(0xFF2B2E3A)
                         )
                     )
                 }
             }
 
-            // ACCENT COLOR PICKER CARD
+            // ACCENT PALETTE SELECTOR
             AppleGlassCard(isGlassmorphism = isGlassmorphism, intensity = intensity) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(text = "Accent Color Palette", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = Color.White)
+                    Text("Accent Theme", style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.SemiBold)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         ThemeAccent.values().forEach { item ->
                             val isSelected = accent == item
+                            val borderColor by animateColorAsState(
+                                targetValue = if (isSelected) Color.White else Color.Transparent,
+                                label = "border_anim"
+                            )
+
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier
-                                    .clip(CircleShape)
+                                    .clip(RoundedCornerShape(12.dp))
                                     .clickable { onAccentSelected(item) }
-                                    .padding(4.dp)
+                                    .padding(6.dp)
                             ) {
                                 Box(
                                     modifier = Modifier
-                                        .size(40.dp)
+                                        .size(38.dp)
                                         .clip(CircleShape)
                                         .background(item.primary)
-                                        .border(
-                                            width = if (isSelected) 3.dp else 0.dp,
-                                            color = if (isSelected) Color.White else Color.Transparent,
-                                            shape = CircleShape
-                                        )
+                                        .border(2.dp, borderColor, CircleShape)
                                 )
-                                Spacer(modifier = Modifier.height(4.dp))
+                                Spacer(modifier = Modifier.height(6.dp))
                                 Text(
                                     text = item.displayName.split(" ")[0],
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = if (isSelected) Color.White else Color.White.copy(alpha = 0.6f)
+                                    color = if (isSelected) Color.White else Color(0xFF8E9094)
                                 )
                             }
                         }
@@ -119,55 +115,81 @@ fun SettingsScreen(
                 }
             }
 
-            // GLASS INTENSITY CARD
+            // INTENSITY SEGMENT CONTROL
             AppleGlassCard(isGlassmorphism = isGlassmorphism, intensity = intensity) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Text(text = "Glass Intensity", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = Color.White)
+                    Text("Glass Intensity", style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.SemiBold)
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color(0xFF0F1015))
+                            .padding(4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         GlassIntensity.values().forEach { level ->
                             val isSelected = intensity == level
-                            FilterChip(
-                                selected = isSelected,
-                                onClick = { onIntensitySelected(level) },
-                                label = { Text(level.displayName) },
-                                modifier = Modifier.weight(1f),
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = accent.primary,
-                                    selectedLabelColor = Color.White,
-                                    containerColor = Color.White.copy(alpha = 0.05f),
-                                    labelColor = Color.White.copy(alpha = 0.7f)
-                                )
+                            val bg by animateColorAsState(
+                                targetValue = if (isSelected) accent.primary else Color.Transparent,
+                                label = "intensity_bg"
                             )
+
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(36.dp)
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(bg)
+                                    .clickable { onIntensitySelected(level) }
+                            ) {
+                                Text(
+                                    text = level.displayName,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = if (isSelected) Color.White else Color(0xFF8E9094),
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                )
+                            }
                         }
                     }
                 }
             }
 
-            // LAYOUT DENSITY CARD
+            // DENSITY SEGMENT CONTROL
             AppleGlassCard(isGlassmorphism = isGlassmorphism, intensity = intensity) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Text(text = "Layout Density", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = Color.White)
+                    Text("Layout Density", style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.SemiBold)
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color(0xFF0F1015))
+                            .padding(4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         LayoutDensity.values().forEach { dens ->
                             val isSelected = density == dens
-                            FilterChip(
-                                selected = isSelected,
-                                onClick = { onDensitySelected(dens) },
-                                label = { Text(dens.displayName) },
-                                modifier = Modifier.weight(1f),
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = accent.primary,
-                                    selectedLabelColor = Color.White,
-                                    containerColor = Color.White.copy(alpha = 0.05f),
-                                    labelColor = Color.White.copy(alpha = 0.7f)
-                                )
+                            val bg by animateColorAsState(
+                                targetValue = if (isSelected) accent.primary else Color.Transparent,
+                                label = "density_bg"
                             )
+
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(36.dp)
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(bg)
+                                    .clickable { onDensitySelected(dens) }
+                            ) {
+                                Text(
+                                    text = dens.displayName,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = if (isSelected) Color.White else Color(0xFF8E9094),
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                )
+                            }
                         }
                     }
                 }

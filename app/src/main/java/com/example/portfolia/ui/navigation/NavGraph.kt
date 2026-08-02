@@ -1,7 +1,6 @@
 package com.example.portfolia.ui.navigation
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -57,12 +57,13 @@ fun MainScreen() {
             bottomBar = {
                 if (currentRoute in bottomBarScreens.map { it.route }) {
                     NavigationBar(
-                        containerColor = if (isGlassmorphism) Color.Black.copy(alpha = 0.55f) else Color(0xFF1A1A1A),
+                        containerColor = Color(0xFF12141A).copy(alpha = 0.90f),
                         contentColor = Color.White,
                         tonalElevation = 0.dp,
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 12.dp)
-                            .clip(RoundedCornerShape(32.dp))
+                            .clip(RoundedCornerShape(28.dp))
+                            .graphicsLayer { shadowElevation = 8f }
                     ) {
                         bottomBarScreens.forEach { screen ->
                             val isSelected = currentRoute == screen.route
@@ -72,10 +73,10 @@ fun MainScreen() {
                                 selected = isSelected,
                                 colors = NavigationBarItemDefaults.colors(
                                     selectedIconColor = Color.White,
-                                    unselectedIconColor = Color(0xFF8E8E93),
+                                    unselectedIconColor = Color(0xFF6E7178),
                                     selectedTextColor = Color.White,
-                                    unselectedTextColor = Color(0xFF8E8E93),
-                                    indicatorColor = currentAccent.primary.copy(alpha = 0.35f)
+                                    unselectedTextColor = Color(0xFF6E7178),
+                                    indicatorColor = currentAccent.primary.copy(alpha = 0.30f)
                                 ),
                                 onClick = {
                                     navController.navigate(screen.route) {
@@ -94,8 +95,8 @@ fun MainScreen() {
                 navController = navController,
                 startDestination = Screen.Projects.route,
                 modifier = Modifier.padding(padding),
-                enterTransition = { fadeIn(tween(280, easing = FastOutSlowInEasing)) },
-                exitTransition = { fadeOut(tween(280, easing = FastOutSlowInEasing)) }
+                enterTransition = { fadeIn(tween(200)) },
+                exitTransition = { fadeOut(tween(200)) }
             ) {
                 composable(Screen.Projects.route) {
                     HomeScreen(

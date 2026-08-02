@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.example.portfolia.ui.theme.GlassIntensity
 
@@ -23,51 +24,47 @@ fun AppleGlassCard(
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val shape = RoundedCornerShape(22.dp)
+    val shape = RoundedCornerShape(20.dp)
 
-    if (isGlassmorphism) {
-        val glassBorder = Brush.verticalGradient(
-            colors = listOf(
-                Color.White.copy(alpha = 0.35f),
-                Color.White.copy(alpha = 0.05f)
-            )
+    // Ultra-sharp 1px specular edge border
+    val borderBrush = Brush.verticalGradient(
+        colors = listOf(
+            Color.White.copy(alpha = if (isGlassmorphism) 0.16f else 0.08f),
+            Color.White.copy(alpha = 0.03f)
         )
+    )
 
-        Card(
-            onClick = { onClick?.invoke() },
-            enabled = onClick != null,
-            shape = shape,
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White.copy(alpha = intensity.alpha)
-            ),
-            border = BorderStroke(1.dp, glassBorder),
-            modifier = modifier
-        ) {
-            Column(
-                modifier = Modifier
-                    .background(
-                        Brush.linearGradient(
-                            colors = listOf(
-                                Color.White.copy(alpha = intensity.alpha + 0.04f),
-                                Color.White.copy(alpha = 0.01f)
-                            )
+    // Crisp dark slate surface hierarchy (No muddy gray fills)
+    val cardBg = if (isGlassmorphism) {
+        Color(0xFF161820).copy(alpha = 0.75f)
+    } else {
+        Color(0xFF161820)
+    }
+
+    Card(
+        onClick = { onClick?.invoke() },
+        enabled = onClick != null,
+        shape = shape,
+        colors = CardDefaults.cardColors(containerColor = cardBg),
+        border = BorderStroke(1.dp, borderBrush),
+        modifier = modifier.graphicsLayer {
+            // Offload rendering layers directly to GPU
+            clip = true
+            shadowElevation = 0f
+        }
+    ) {
+        Column(
+            modifier = Modifier
+                .background(
+                    Brush.linearGradient(
+                        colors = listOf(
+                            Color.White.copy(alpha = 0.04f),
+                            Color.Transparent
                         )
                     )
-                    .padding(18.dp),
-                content = content
-            )
-        }
-    } else {
-        Card(
-            onClick = { onClick?.invoke() },
-            enabled = onClick != null,
-            shape = shape,
-            colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF1A1A1A)
-            ),
-            modifier = modifier
-        ) {
-            Column(modifier = Modifier.padding(18.dp), content = content)
-        }
+                )
+                .padding(18.dp),
+            content = content
+        )
     }
 }
