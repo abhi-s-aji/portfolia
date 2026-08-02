@@ -22,19 +22,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-
-      - name: Ensure Gradle Wrapper Exists
-        run: |
-          if [ ! -f gradlew ]; then
-            echo "gradlew not found, generating Gradle Wrapper..."
-            gradle wrapper
-          fi
-          chmod +x gradlew
+      - name: Make gradlew executable
+        run: chmod +x gradlew
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug --no-daemon
 
       - name: Prepare APK File
         run: |
@@ -48,12 +40,6 @@ jobs:
           name: "Portfolia v1.0.0"
           body: |
             ## Portfolia - Portfolio & Project Manager
-            
-            ### Highlights
-            * Complete Jetpack Compose Material3 Design
-            * Room Database integration with offline storage
-            * Dynamic search and category filtering
-            * Developer Profile with Resume PDF support
             
             Download `portfolia.apk` below to install on your Android device!
           draft: false
