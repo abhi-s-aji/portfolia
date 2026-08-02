@@ -22,6 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.portfolia.PortfoliaApp
 import com.example.portfolia.data.UserProfileEntity
 import com.example.portfolia.ui.components.AppleGlassCard
+import com.example.portfolia.ui.theme.GlassIntensity
 import com.example.portfolia.ui.theme.ThemeAccent
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -56,6 +57,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 fun ProfileScreen(
     isGlassmorphism: Boolean,
     accent: ThemeAccent,
+    intensity: GlassIntensity,
     viewModel: ProfileViewModel = viewModel()
 ) {
     val profile by viewModel.userProfile.collectAsState()
@@ -127,7 +129,11 @@ fun ProfileScreen(
                     color = accent.primary
                 )
 
-                AppleGlassCard(isGlassmorphism = isGlassmorphism, modifier = Modifier.fillMaxWidth()) {
+                AppleGlassCard(
+                    isGlassmorphism = isGlassmorphism,
+                    intensity = intensity,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Text(text = "About", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = Color.White)
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
@@ -137,7 +143,11 @@ fun ProfileScreen(
                     )
                 }
 
-                AppleGlassCard(isGlassmorphism = isGlassmorphism, modifier = Modifier.fillMaxWidth()) {
+                AppleGlassCard(
+                    isGlassmorphism = isGlassmorphism,
+                    intensity = intensity,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(text = "Contact & Links", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = Color.White)
                         Text(text = "Email: ${profile?.email ?: ""}", style = MaterialTheme.typography.bodyMedium, color = Color.White.copy(alpha = 0.75f))

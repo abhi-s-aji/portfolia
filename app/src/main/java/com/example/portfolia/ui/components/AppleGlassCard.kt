@@ -13,11 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.portfolia.ui.theme.GlassIntensity
 
 @Composable
 fun AppleGlassCard(
     modifier: Modifier = Modifier,
     isGlassmorphism: Boolean = true,
+    intensity: GlassIntensity = GlassIntensity.MEDIUM,
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -26,7 +28,7 @@ fun AppleGlassCard(
     if (isGlassmorphism) {
         val glassBorder = Brush.verticalGradient(
             colors = listOf(
-                Color.White.copy(alpha = 0.30f),
+                Color.White.copy(alpha = 0.35f),
                 Color.White.copy(alpha = 0.05f)
             )
         )
@@ -36,7 +38,7 @@ fun AppleGlassCard(
             enabled = onClick != null,
             shape = shape,
             colors = CardDefaults.cardColors(
-                containerColor = Color.White.copy(alpha = 0.08f)
+                containerColor = Color.White.copy(alpha = intensity.alpha)
             ),
             border = BorderStroke(1.dp, glassBorder),
             modifier = modifier
@@ -46,7 +48,7 @@ fun AppleGlassCard(
                     .background(
                         Brush.linearGradient(
                             colors = listOf(
-                                Color.White.copy(alpha = 0.08f),
+                                Color.White.copy(alpha = intensity.alpha + 0.04f),
                                 Color.White.copy(alpha = 0.01f)
                             )
                         )
@@ -61,7 +63,7 @@ fun AppleGlassCard(
             enabled = onClick != null,
             shape = shape,
             colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF1C1C1E) // iOS Dark Gray Surface
+                containerColor = Color(0xFF1A1A1A)
             ),
             modifier = modifier
         ) {

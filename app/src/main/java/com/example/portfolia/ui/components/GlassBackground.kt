@@ -15,7 +15,7 @@ import com.example.portfolia.ui.theme.ThemeAccent
 @Composable
 fun AmbientGlassBackground(
     enabled: Boolean = true,
-    accent: ThemeAccent = ThemeAccent.RED,
+    accent: ThemeAccent = ThemeAccent.SAPPHIRE,
     content: @Composable BoxScope.() -> Unit
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "mesh_drift")

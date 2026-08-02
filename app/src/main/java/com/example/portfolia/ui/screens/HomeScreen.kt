@@ -23,9 +23,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.portfolia.PortfoliaApp
 import com.example.portfolia.data.ProjectEntity
+import com.example.portfolia.data.ReferenceEntity
 import com.example.portfolia.data.UserProfileEntity
 import com.example.portfolia.ui.components.AppleGlassCard
+import com.example.portfolia.ui.theme.GlassIntensity
+import com.example.portfolia.ui.theme.LayoutDensity
 import com.example.portfolia.ui.theme.ThemeAccent
+import com.example.portfolia.util.AiPromptExporter
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -39,6 +43,9 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val userProfile: StateFlow<UserProfileEntity?> = db.profileDao().getUserProfile()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
+    val references: StateFlow<List<ReferenceEntity>> = db.referenceDao().getAllReferences()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     fun deleteProject(project: ProjectEntity) {
         viewModelScope.launch { db.projectDao().deleteProject(project) }
     }
@@ -49,11 +56,14 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 fun HomeScreen(
     isGlassmorphism: Boolean,
     accent: ThemeAccent,
+    intensity: GlassIntensity,
+    density: LayoutDensity,
     onAddProjectClick: () -> Unit,
     viewModel: HomeViewModel = viewModel()
 ) {
     val projects by viewModel.projects.collectAsState()
     val profile by viewModel.userProfile.collectAsState()
+    val references by viewModel.references.collectAsState()
     val context = LocalContext.current
     var searchQuery by remember { mutableStateOf("") }
 
@@ -86,13 +96,28 @@ fun HomeScreen(
                 },
                 colors = TopAppBarDefaults.largeTopAppBarColors(
                     containerColor = Color.Transparent
-                )
+                ),
+                actions = {
+                    IconButton(onClick = {
+                        val prompt = AiPromptExporter.generateMasterPrompt(profile, projects, references)
+                        val clipboard = context.getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                        val clip = android.content.ClipData.newPlainText("AI Web Portfolio Prompt", prompt)
+                        clipboard.setPrimaryClip(clip)
+                        android.widget.Toast.makeText(context, "AI Website Prompt copied to clipboard!", android.widget.Toast.LENGTH_LONG).show()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.AutoAwesome,
+                            contentDescription = "Export AI Prompt",
+                            tint = accent.primary
+                        )
+                    }
+                }
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddProjectClick,
-                containerColor = accent.primary, // Apple Music Accent Dynamic
+                containerColor = accent.primary,
                 contentColor = Color.White,
                 shape = CircleShape,
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -105,7 +130,7 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = density.paddingDp.dp) // Dynamic Density Padding
         ) {
             OutlinedTextField(
                 value = searchQuery,
@@ -124,7 +149,7 @@ fun HomeScreen(
                 )
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(density.paddingDp.dp)) // Dynamic Density Spacing
 
             AnimatedVisibility(
                 visible = filteredProjects.isEmpty(),
@@ -154,11 +179,12 @@ fun HomeScreen(
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
+                verticalArrangement = Arrangement.spacedBy(density.paddingDp.dp) // Dynamic Density Spacing
             ) {
                 items(filteredProjects, key = { it.id }) { project ->
                     AppleGlassCard(
                         isGlassmorphism = isGlassmorphism,
+                        intensity = intensity, // Dynamic Glass Intensity
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Row(
@@ -193,7 +219,7 @@ fun HomeScreen(
                         Text(
                             text = "Tech: ${project.techStack}",
                             style = MaterialTheme.typography.labelMedium,
-                            color = accent.primary // Dynamic Accent Color
+                            color = accent.primary
                         )
                         Spacer(modifier = Modifier.height(14.dp))
                         Row(
@@ -225,7 +251,7 @@ fun HomeScreen(
                                 Icon(
                                     imageVector = Icons.Default.DeleteOutline,
                                     contentDescription = "Delete",
-                                    tint = Color(0xFFFF453A) // Apple Soft Red
+                                    tint = Color(0xFFFF453A)
                                 )
                             }
                         }

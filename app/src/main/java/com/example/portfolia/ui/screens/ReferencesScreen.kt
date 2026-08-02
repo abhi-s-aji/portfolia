@@ -23,6 +23,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.portfolia.PortfoliaApp
 import com.example.portfolia.data.ReferenceEntity
 import com.example.portfolia.ui.components.AppleGlassCard
+import com.example.portfolia.ui.theme.GlassIntensity
+import com.example.portfolia.ui.theme.LayoutDensity
 import com.example.portfolia.ui.theme.ThemeAccent
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -51,6 +53,8 @@ class ReferenceViewModel(application: Application) : AndroidViewModel(applicatio
 fun ReferencesScreen(
     isGlassmorphism: Boolean,
     accent: ThemeAccent,
+    intensity: GlassIntensity,
+    density: LayoutDensity,
     viewModel: ReferenceViewModel = viewModel()
 ) {
     val references by viewModel.references.collectAsState()
@@ -79,7 +83,7 @@ fun ReferencesScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddDialog = true },
-                containerColor = accent.primary, // Dynamic Accent Color
+                containerColor = accent.primary,
                 contentColor = Color.White,
                 shape = CircleShape,
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -92,7 +96,7 @@ fun ReferencesScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = density.paddingDp.dp) // Dynamic Density Padding
         ) {
             if (references.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -113,11 +117,14 @@ fun ReferencesScreen(
                 }
             } else {
                 LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(14.dp),
+                    verticalArrangement = Arrangement.spacedBy(density.paddingDp.dp), // Dynamic Density Spacing
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(references, key = { it.id }) { ref ->
-                        AppleGlassCard(isGlassmorphism = isGlassmorphism) {
+                        AppleGlassCard(
+                            isGlassmorphism = isGlassmorphism,
+                            intensity = intensity // Dynamic Glass Intensity
+                        ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -178,7 +185,7 @@ fun ReferencesScreen(
                                     Icon(
                                         Icons.Default.DeleteOutline,
                                         contentDescription = "Delete",
-                                        tint = Color(0xFFFF453A) // Apple Soft Red
+                                        tint = Color(0xFFFF453A)
                                     )
                                 }
                             }

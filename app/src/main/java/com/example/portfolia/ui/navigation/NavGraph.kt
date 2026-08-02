@@ -20,6 +20,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.portfolia.ui.components.AmbientGlassBackground
 import com.example.portfolia.ui.screens.*
+import com.example.portfolia.ui.theme.GlassIntensity
+import com.example.portfolia.ui.theme.LayoutDensity
 import com.example.portfolia.ui.theme.ThemeAccent
 
 sealed class Screen(val route: String, val title: String, val icon: @Composable () -> Unit) {
@@ -37,7 +39,9 @@ fun MainScreen() {
     val currentRoute = navBackStackEntry?.destination?.route
 
     var isGlassmorphism by remember { mutableStateOf(true) }
-    var currentAccent by remember { mutableStateOf(ThemeAccent.RED) }
+    var currentAccent by remember { mutableStateOf(ThemeAccent.SAPPHIRE) }
+    var currentIntensity by remember { mutableStateOf(GlassIntensity.MEDIUM) }
+    var currentDensity by remember { mutableStateOf(LayoutDensity.COMFORTABLE) }
 
     val bottomBarScreens = listOf(
         Screen.Projects,
@@ -53,7 +57,7 @@ fun MainScreen() {
             bottomBar = {
                 if (currentRoute in bottomBarScreens.map { it.route }) {
                     NavigationBar(
-                        containerColor = if (isGlassmorphism) Color.Black.copy(alpha = 0.55f) else Color(0xFF1C1C1E),
+                        containerColor = if (isGlassmorphism) Color.Black.copy(alpha = 0.55f) else Color(0xFF1A1A1A),
                         contentColor = Color.White,
                         tonalElevation = 0.dp,
                         modifier = Modifier
@@ -75,9 +79,7 @@ fun MainScreen() {
                                 ),
                                 onClick = {
                                     navController.navigate(screen.route) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
-                                        }
+                                        popUpTo(navController.graph.findStartDestination().id) { saveState = true }
                                         launchSingleTop = true
                                         restoreState = true
                                     }
@@ -92,7 +94,6 @@ fun MainScreen() {
                 navController = navController,
                 startDestination = Screen.Projects.route,
                 modifier = Modifier.padding(padding),
-                // Smooth fade transitions with zero harsh flashes
                 enterTransition = { fadeIn(tween(280, easing = FastOutSlowInEasing)) },
                 exitTransition = { fadeOut(tween(280, easing = FastOutSlowInEasing)) }
             ) {
@@ -100,21 +101,36 @@ fun MainScreen() {
                     HomeScreen(
                         isGlassmorphism = isGlassmorphism,
                         accent = currentAccent,
+                        intensity = currentIntensity,
+                        density = currentDensity,
                         onAddProjectClick = { navController.navigate(Screen.AddProject.route) }
                     )
                 }
                 composable(Screen.References.route) {
-                    ReferencesScreen(isGlassmorphism = isGlassmorphism, accent = currentAccent)
+                    ReferencesScreen(
+                        isGlassmorphism = isGlassmorphism,
+                        accent = currentAccent,
+                        intensity = currentIntensity,
+                        density = currentDensity
+                    )
                 }
                 composable(Screen.Profile.route) {
-                    ProfileScreen(isGlassmorphism = isGlassmorphism, accent = currentAccent)
+                    ProfileScreen(
+                        isGlassmorphism = isGlassmorphism,
+                        accent = currentAccent,
+                        intensity = currentIntensity
+                    )
                 }
                 composable(Screen.Settings.route) {
                     SettingsScreen(
                         isGlassmorphism = isGlassmorphism,
                         accent = currentAccent,
+                        intensity = currentIntensity,
+                        density = currentDensity,
                         onGlassmorphismToggle = { isGlassmorphism = it },
-                        onAccentSelected = { currentAccent = it }
+                        onAccentSelected = { currentAccent = it },
+                        onIntensitySelected = { currentIntensity = it },
+                        onDensitySelected = { currentDensity = it }
                     )
                 }
                 composable(Screen.AddProject.route) {
