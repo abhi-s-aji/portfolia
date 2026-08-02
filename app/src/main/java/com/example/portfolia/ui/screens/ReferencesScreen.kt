@@ -23,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.portfolia.PortfoliaApp
 import com.example.portfolia.data.ReferenceEntity
 import com.example.portfolia.ui.components.AppleGlassCard
+import com.example.portfolia.ui.theme.ThemeAccent
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -49,6 +50,7 @@ class ReferenceViewModel(application: Application) : AndroidViewModel(applicatio
 @Composable
 fun ReferencesScreen(
     isGlassmorphism: Boolean,
+    accent: ThemeAccent,
     viewModel: ReferenceViewModel = viewModel()
 ) {
     val references by viewModel.references.collectAsState()
@@ -77,7 +79,7 @@ fun ReferencesScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddDialog = true },
-                containerColor = Color(0xFFFA2D55), // Apple Music Accent Red
+                containerColor = accent.primary, // Dynamic Accent Color
                 contentColor = Color.White,
                 shape = CircleShape,
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -200,9 +202,9 @@ fun ReferencesScreen(
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedTextColor = Color.White,
                                 unfocusedTextColor = Color.White,
-                                focusedBorderColor = Color(0xFFFA2D55),
+                                focusedBorderColor = accent.primary,
                                 unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                                focusedLabelColor = Color(0xFFFA2D55),
+                                focusedLabelColor = accent.primary,
                                 unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
                             )
                         )
@@ -213,9 +215,9 @@ fun ReferencesScreen(
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedTextColor = Color.White,
                                 unfocusedTextColor = Color.White,
-                                focusedBorderColor = Color(0xFFFA2D55),
+                                focusedBorderColor = accent.primary,
                                 unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                                focusedLabelColor = Color(0xFFFA2D55),
+                                focusedLabelColor = accent.primary,
                                 unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
                             )
                         )
@@ -226,9 +228,9 @@ fun ReferencesScreen(
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedTextColor = Color.White,
                                 unfocusedTextColor = Color.White,
-                                focusedBorderColor = Color(0xFFFA2D55),
+                                focusedBorderColor = accent.primary,
                                 unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                                focusedLabelColor = Color(0xFFFA2D55),
+                                focusedLabelColor = accent.primary,
                                 unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
                             )
                         )
@@ -239,9 +241,9 @@ fun ReferencesScreen(
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedTextColor = Color.White,
                                 unfocusedTextColor = Color.White,
-                                focusedBorderColor = Color(0xFFFA2D55),
+                                focusedBorderColor = accent.primary,
                                 unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                                focusedLabelColor = Color(0xFFFA2D55),
+                                focusedLabelColor = accent.primary,
                                 unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
                             )
                         )
@@ -256,7 +258,7 @@ fun ReferencesScreen(
                                 showAddDialog = false
                             }
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFA2D55))
+                        colors = ButtonDefaults.buttonColors(containerColor = accent.primary)
                     ) {
                         Text("Save")
                     }

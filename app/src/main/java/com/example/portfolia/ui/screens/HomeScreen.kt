@@ -25,6 +25,7 @@ import com.example.portfolia.PortfoliaApp
 import com.example.portfolia.data.ProjectEntity
 import com.example.portfolia.data.UserProfileEntity
 import com.example.portfolia.ui.components.AppleGlassCard
+import com.example.portfolia.ui.theme.ThemeAccent
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -47,6 +48,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 @Composable
 fun HomeScreen(
     isGlassmorphism: Boolean,
+    accent: ThemeAccent,
     onAddProjectClick: () -> Unit,
     viewModel: HomeViewModel = viewModel()
 ) {
@@ -90,7 +92,7 @@ fun HomeScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddProjectClick,
-                containerColor = Color(0xFFFA2D55), // Apple Music Accent Red
+                containerColor = accent.primary, // Apple Music Accent Dynamic
                 contentColor = Color.White,
                 shape = CircleShape,
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -115,7 +117,7 @@ fun HomeScreen(
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
-                    focusedBorderColor = Color(0xFFFA2D55),
+                    focusedBorderColor = accent.primary,
                     unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
                     focusedContainerColor = Color.White.copy(alpha = 0.05f),
                     unfocusedContainerColor = Color.White.copy(alpha = 0.02f)
@@ -191,7 +193,7 @@ fun HomeScreen(
                         Text(
                             text = "Tech: ${project.techStack}",
                             style = MaterialTheme.typography.labelMedium,
-                            color = Color(0xFFFA2D55) // Apple Accent Color
+                            color = accent.primary // Dynamic Accent Color
                         )
                         Spacer(modifier = Modifier.height(14.dp))
                         Row(

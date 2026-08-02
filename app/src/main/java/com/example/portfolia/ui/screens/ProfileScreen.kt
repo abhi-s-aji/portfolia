@@ -22,6 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.portfolia.PortfoliaApp
 import com.example.portfolia.data.UserProfileEntity
 import com.example.portfolia.ui.components.AppleGlassCard
+import com.example.portfolia.ui.theme.ThemeAccent
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -54,6 +55,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 @Composable
 fun ProfileScreen(
     isGlassmorphism: Boolean,
+    accent: ThemeAccent,
     viewModel: ProfileViewModel = viewModel()
 ) {
     val profile by viewModel.userProfile.collectAsState()
@@ -82,7 +84,7 @@ fun ProfileScreen(
                         Icon(
                             imageVector = if (isEditing) Icons.Default.Save else Icons.Default.Edit,
                             contentDescription = if (isEditing) "Save Profile" else "Edit Profile",
-                            tint = Color(0xFFFA2D55)
+                            tint = accent.primary
                         )
                     }
                 }
@@ -122,7 +124,7 @@ fun ProfileScreen(
                 Text(
                     text = profile?.title ?: "Developer Title",
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color(0xFFFA2D55)
+                    color = accent.primary
                 )
 
                 AppleGlassCard(isGlassmorphism = isGlassmorphism, modifier = Modifier.fillMaxWidth()) {
@@ -152,9 +154,9 @@ fun ProfileScreen(
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.White,
                         unfocusedTextColor = Color.White,
-                        focusedBorderColor = Color(0xFFFA2D55),
+                        focusedBorderColor = accent.primary,
                         unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                        focusedLabelColor = Color(0xFFFA2D55),
+                        focusedLabelColor = accent.primary,
                         unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
                     )
                 )
@@ -166,9 +168,9 @@ fun ProfileScreen(
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.White,
                         unfocusedTextColor = Color.White,
-                        focusedBorderColor = Color(0xFFFA2D55),
+                        focusedBorderColor = accent.primary,
                         unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                        focusedLabelColor = Color(0xFFFA2D55),
+                        focusedLabelColor = accent.primary,
                         unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
                     )
                 )
@@ -181,9 +183,9 @@ fun ProfileScreen(
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.White,
                         unfocusedTextColor = Color.White,
-                        focusedBorderColor = Color(0xFFFA2D55),
+                        focusedBorderColor = accent.primary,
                         unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                        focusedLabelColor = Color(0xFFFA2D55),
+                        focusedLabelColor = accent.primary,
                         unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
                     )
                 )
@@ -195,9 +197,9 @@ fun ProfileScreen(
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.White,
                         unfocusedTextColor = Color.White,
-                        focusedBorderColor = Color(0xFFFA2D55),
+                        focusedBorderColor = accent.primary,
                         unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                        focusedLabelColor = Color(0xFFFA2D55),
+                        focusedLabelColor = accent.primary,
                         unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
                     )
                 )
@@ -209,9 +211,9 @@ fun ProfileScreen(
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.White,
                         unfocusedTextColor = Color.White,
-                        focusedBorderColor = Color(0xFFFA2D55),
+                        focusedBorderColor = accent.primary,
                         unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                        focusedLabelColor = Color(0xFFFA2D55),
+                        focusedLabelColor = accent.primary,
                         unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
                     )
                 )
@@ -223,9 +225,9 @@ fun ProfileScreen(
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.White,
                         unfocusedTextColor = Color.White,
-                        focusedBorderColor = Color(0xFFFA2D55),
+                        focusedBorderColor = accent.primary,
                         unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                        focusedLabelColor = Color(0xFFFA2D55),
+                        focusedLabelColor = accent.primary,
                         unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
                     )
                 )
@@ -235,7 +237,7 @@ fun ProfileScreen(
                         isEditing = false
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFA2D55))
+                    colors = ButtonDefaults.buttonColors(containerColor = accent.primary)
                 ) {
                     Icon(Icons.Default.Save, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))

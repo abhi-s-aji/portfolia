@@ -1,20 +1,28 @@
 package com.example.portfolia.ui.screens
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.portfolia.ui.components.AppleGlassCard
+import com.example.portfolia.ui.theme.ThemeAccent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     isGlassmorphism: Boolean,
-    onGlassmorphismToggle: (Boolean) -> Unit
+    accent: ThemeAccent,
+    onGlassmorphismToggle: (Boolean) -> Unit,
+    onAccentSelected: (ThemeAccent) -> Unit
 ) {
     Scaffold(
         containerColor = Color.Transparent,
@@ -32,6 +40,7 @@ fun SettingsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // GLASSMORPHISM SWITCH CARD
             AppleGlassCard(isGlassmorphism = isGlassmorphism) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -40,11 +49,11 @@ fun SettingsScreen(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(text = "Glassmorphism UI Effect", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = Color.White)
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Enable translucent frosted-glass styling across project cards and menus.",
+                            text = "Translucent frosted-glass cards with ambient gradient glows.",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color.White.copy(alpha = 0.6f)
+                            color = Color.White.copy(alpha = 0.7f)
                         )
                     }
                     Switch(
@@ -52,7 +61,7 @@ fun SettingsScreen(
                         onCheckedChange = onGlassmorphismToggle,
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = Color.White,
-                            checkedTrackColor = Color(0xFFFA2D55),
+                            checkedTrackColor = accent.primary,
                             uncheckedThumbColor = Color(0xFF8E8E93),
                             uncheckedTrackColor = Color.White.copy(alpha = 0.2f)
                         )
@@ -60,14 +69,50 @@ fun SettingsScreen(
                 }
             }
 
+            // COLOR PALETTE ACCENT SELECTOR CARD
             AppleGlassCard(isGlassmorphism = isGlassmorphism) {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(text = "Theme System", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = Color.White)
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(text = "Accent Color Theme", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), color = Color.White)
                     Text(
-                        text = "Apple Music liquid mesh gradient background with rich colors (Warm Apple Red, Soft Indigo, Deep Violet) extracts a premium mobile developer portfolio experience.",
+                        text = "Customize the background gradient mesh and accent highlights.",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.White.copy(alpha = 0.6f)
+                        color = Color.White.copy(alpha = 0.7f)
                     )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        ThemeAccent.values().forEach { item ->
+                            val isSelected = accent == item
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .clickable { onAccentSelected(item) }
+                                    .padding(8.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(44.dp)
+                                        .clip(CircleShape)
+                                        .background(item.primary)
+                                        .border(
+                                            width = if (isSelected) 3.dp else 0.dp,
+                                            color = if (isSelected) Color.White else Color.Transparent,
+                                            shape = CircleShape
+                                        )
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = item.displayName.split(" ")[0],
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = if (isSelected) Color.White else Color.White.copy(alpha = 0.6f)
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -1,6 +1,7 @@
 package com.example.portfolia.ui.navigation
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,6 +20,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.portfolia.ui.components.AmbientGlassBackground
 import com.example.portfolia.ui.screens.*
+import com.example.portfolia.ui.theme.ThemeAccent
 
 sealed class Screen(val route: String, val title: String, val icon: @Composable () -> Unit) {
     object Projects : Screen("projects", "Projects", { Icon(Icons.Default.Folder, contentDescription = null) })
@@ -35,6 +37,7 @@ fun MainScreen() {
     val currentRoute = navBackStackEntry?.destination?.route
 
     var isGlassmorphism by remember { mutableStateOf(true) }
+    var currentAccent by remember { mutableStateOf(ThemeAccent.RED) }
 
     val bottomBarScreens = listOf(
         Screen.Projects,
@@ -43,7 +46,7 @@ fun MainScreen() {
         Screen.Settings
     )
 
-    AmbientGlassBackground(enabled = isGlassmorphism) {
+    AmbientGlassBackground(enabled = isGlassmorphism, accent = currentAccent) {
         Scaffold(
             containerColor = Color.Transparent,
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -68,7 +71,7 @@ fun MainScreen() {
                                     unselectedIconColor = Color(0xFF8E8E93),
                                     selectedTextColor = Color.White,
                                     unselectedTextColor = Color(0xFF8E8E93),
-                                    indicatorColor = Color(0xFFFA2D55).copy(alpha = 0.30f) // Apple Accent Glow
+                                    indicatorColor = currentAccent.primary.copy(alpha = 0.35f)
                                 ),
                                 onClick = {
                                     navController.navigate(screen.route) {
@@ -89,29 +92,34 @@ fun MainScreen() {
                 navController = navController,
                 startDestination = Screen.Projects.route,
                 modifier = Modifier.padding(padding),
-                enterTransition = { fadeIn(tween(200)) },
-                exitTransition = { fadeOut(tween(200)) }
+                // Smooth fade transitions with zero harsh flashes
+                enterTransition = { fadeIn(tween(280, easing = FastOutSlowInEasing)) },
+                exitTransition = { fadeOut(tween(280, easing = FastOutSlowInEasing)) }
             ) {
                 composable(Screen.Projects.route) {
                     HomeScreen(
                         isGlassmorphism = isGlassmorphism,
+                        accent = currentAccent,
                         onAddProjectClick = { navController.navigate(Screen.AddProject.route) }
                     )
                 }
                 composable(Screen.References.route) {
-                    ReferencesScreen(isGlassmorphism = isGlassmorphism)
+                    ReferencesScreen(isGlassmorphism = isGlassmorphism, accent = currentAccent)
                 }
                 composable(Screen.Profile.route) {
-                    ProfileScreen(isGlassmorphism = isGlassmorphism)
+                    ProfileScreen(isGlassmorphism = isGlassmorphism, accent = currentAccent)
                 }
                 composable(Screen.Settings.route) {
                     SettingsScreen(
                         isGlassmorphism = isGlassmorphism,
-                        onGlassmorphismToggle = { isGlassmorphism = it }
+                        accent = currentAccent,
+                        onGlassmorphismToggle = { isGlassmorphism = it },
+                        onAccentSelected = { currentAccent = it }
                     )
                 }
                 composable(Screen.AddProject.route) {
                     ProjectFormScreen(
+                        accent = currentAccent,
                         onBackClick = { navController.popBackStack() },
                         onProjectSaved = { navController.popBackStack() }
                     )

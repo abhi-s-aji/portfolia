@@ -16,6 +16,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.portfolia.PortfoliaApp
 import com.example.portfolia.data.ProjectEntity
+import com.example.portfolia.ui.theme.ThemeAccent
 import kotlinx.coroutines.launch
 
 class FormViewModel(application: Application) : AndroidViewModel(application) {
@@ -40,6 +41,7 @@ class FormViewModel(application: Application) : AndroidViewModel(application) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectFormScreen(
+    accent: ThemeAccent,
     onBackClick: () -> Unit,
     onProjectSaved: () -> Unit,
     viewModel: FormViewModel = viewModel()
@@ -83,9 +85,9 @@ fun ProjectFormScreen(
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
-                    focusedBorderColor = Color(0xFFFA2D55),
+                    focusedBorderColor = accent.primary,
                     unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                    focusedLabelColor = Color(0xFFFA2D55),
+                    focusedLabelColor = accent.primary,
                     unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
                 )
             )
@@ -98,9 +100,9 @@ fun ProjectFormScreen(
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
-                    focusedBorderColor = Color(0xFFFA2D55),
+                    focusedBorderColor = accent.primary,
                     unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                    focusedLabelColor = Color(0xFFFA2D55),
+                    focusedLabelColor = accent.primary,
                     unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
                 )
             )
@@ -112,9 +114,9 @@ fun ProjectFormScreen(
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
-                    focusedBorderColor = Color(0xFFFA2D55),
+                    focusedBorderColor = accent.primary,
                     unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                    focusedLabelColor = Color(0xFFFA2D55),
+                    focusedLabelColor = accent.primary,
                     unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
                 )
             )
@@ -126,9 +128,9 @@ fun ProjectFormScreen(
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
-                    focusedBorderColor = Color(0xFFFA2D55),
+                    focusedBorderColor = accent.primary,
                     unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                    focusedLabelColor = Color(0xFFFA2D55),
+                    focusedLabelColor = accent.primary,
                     unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
                 )
             )
@@ -140,9 +142,9 @@ fun ProjectFormScreen(
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
-                    focusedBorderColor = Color(0xFFFA2D55),
+                    focusedBorderColor = accent.primary,
                     unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                    focusedLabelColor = Color(0xFFFA2D55),
+                    focusedLabelColor = accent.primary,
                     unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
                 )
             )
@@ -154,7 +156,7 @@ fun ProjectFormScreen(
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFA2D55))
+                colors = ButtonDefaults.buttonColors(containerColor = accent.primary)
             ) {
                 Icon(Icons.Default.Save, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
