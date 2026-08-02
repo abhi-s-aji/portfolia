@@ -26,3 +26,15 @@ interface ProfileDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveUserProfile(profile: UserProfileEntity)
 }
+
+@Dao
+interface ReferenceDao {
+    @Query("SELECT * FROM reference_links ORDER BY createdAt DESC")
+    fun getAllReferences(): Flow<List<ReferenceEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertReference(reference: ReferenceEntity)
+
+    @Delete
+    suspend fun deleteReference(reference: ReferenceEntity)
+}

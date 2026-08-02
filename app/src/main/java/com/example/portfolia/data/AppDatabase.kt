@@ -9,10 +9,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database(entities = [ProjectEntity::class, UserProfileEntity::class], version = 1, exportSchema = false)
+@Database(
+    entities = [ProjectEntity::class, UserProfileEntity::class, ReferenceEntity::class],
+    version = 2,
+    exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun projectDao(): ProjectDao
     abstract fun profileDao(): ProfileDao
+    abstract fun referenceDao(): ReferenceDao
 
     companion object {
         @Volatile
@@ -30,15 +35,21 @@ abstract class AppDatabase : RoomDatabase() {
                         super.onCreate(db)
                         INSTANCE?.let { database ->
                             CoroutineScope(Dispatchers.IO).launch {
-                                // Default initial profile (Fully editable by user)
                                 database.profileDao().saveUserProfile(
                                     UserProfileEntity(
                                         name = "Developer Name",
                                         title = "Mobile & Web Engineer",
-                                        bio = "Welcome to my portfolio! Tap the edit icon to customize your profile info."
+                                        bio = "Welcome to my portfolio! Customize your profile in settings or profile tab."
                                     )
                                 )
-                                // Default starter project
+                                database.referenceDao().insertReference(
+                                    ReferenceEntity(
+                                        title = "Jetpack Compose Docs",
+                                        url = "https://developer.android.com/compose",
+                                        category = "Docs",
+                                        notes = "Official Android UI framework documentation"
+                                    )
+                                )
                                 database.projectDao().insertProject(
                                     ProjectEntity(
                                         title = "Portfolia App",

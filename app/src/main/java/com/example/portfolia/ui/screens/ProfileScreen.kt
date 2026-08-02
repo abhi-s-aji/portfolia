@@ -6,7 +6,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Save
@@ -20,6 +19,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.portfolia.PortfoliaApp
 import com.example.portfolia.data.UserProfileEntity
+import com.example.portfolia.ui.components.GlassCard
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -51,7 +51,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    onBackClick: () -> Unit,
+    isGlassmorphism: Boolean,
     viewModel: ProfileViewModel = viewModel()
 ) {
     val profile by viewModel.userProfile.collectAsState()
@@ -68,11 +68,6 @@ fun ProfileScreen(
         topBar = {
             TopAppBar(
                 title = { Text("Developer Profile") },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
                 actions = {
                     IconButton(onClick = {
                         if (isEditing) {
@@ -126,23 +121,18 @@ fun ProfileScreen(
                     color = MaterialTheme.colorScheme.primary
                 )
 
-                ElevatedCard(modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = "About", style = MaterialTheme.typography.titleMedium)
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = profile?.bio ?: "No bio provided.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                GlassCard(isGlassmorphism = isGlassmorphism, modifier = Modifier.fillMaxWidth()) {
+                    Text(text = "About", style = MaterialTheme.typography.titleMedium)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = profile?.bio ?: "No bio provided.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
 
-                ElevatedCard(modifier = Modifier.fillMaxWidth()) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
+                GlassCard(isGlassmorphism = isGlassmorphism, modifier = Modifier.fillMaxWidth()) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(text = "Contact & Links", style = MaterialTheme.typography.titleMedium)
                         Text(text = "Email: ${profile?.email}", style = MaterialTheme.typography.bodyMedium)
                         Text(text = "GitHub: ${profile?.githubUrl}", style = MaterialTheme.typography.bodyMedium)
