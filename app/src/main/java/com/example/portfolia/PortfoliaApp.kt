@@ -1,9 +1,8 @@
 package com.example.portfolia
 
 import android.app.Application
+import com.example.portfolia.data.AppDatabase
 
 class PortfoliaApp : Application() {
-    override fun onCreate() {
-        super.onCreate()
-    }
+    val database: AppDatabase by lazy { AppDatabase.getDatabase(this) }
 }

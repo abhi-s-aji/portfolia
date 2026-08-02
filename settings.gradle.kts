@@ -14,4 +14,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Portfolia"
-include ":app"
+include(":app")
