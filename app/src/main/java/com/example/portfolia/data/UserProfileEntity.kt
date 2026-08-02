@@ -11,5 +11,8 @@ data class UserProfileEntity(
     val bio: String = "Passionate developer crafting high quality applications.",
     val email: String = "developer@example.com",
     val githubUrl: String = "https://github.com",
-    val linkedinUrl: String = "https://linkedin.com"
+    val linkedinUrl: String = "https://linkedin.com",
+    val experience: String = "8+ YRS",
+    val uptime: String = "99.9%",
+    val commits: String = "12.4k"
 )
