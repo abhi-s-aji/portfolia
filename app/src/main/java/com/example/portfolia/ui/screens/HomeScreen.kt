@@ -14,7 +14,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,7 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.portfolia.PortfoliaApp
 import com.example.portfolia.data.ProjectEntity
 import com.example.portfolia.data.UserProfileEntity
-import com.example.portfolia.ui.components.GlassCard
+import com.example.portfolia.ui.components.AppleGlassCard
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -63,6 +65,7 @@ fun HomeScreen(
     }
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             LargeTopAppBar(
                 title = {
@@ -70,25 +73,27 @@ fun HomeScreen(
                         Text(
                             text = "Welcome back,",
                             style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = Color.White.copy(alpha = 0.6f)
                         )
                         Text(
                             text = profile?.name ?: "Developer",
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = MaterialTheme.colorScheme.primary
+                            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                            color = Color.White
                         )
                     }
                 },
                 colors = TopAppBarDefaults.largeTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
+                    containerColor = Color.Transparent
                 )
             )
         },
         floatingActionButton = {
-            LargeFloatingActionButton(
+            FloatingActionButton(
                 onClick = onAddProjectClick,
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                containerColor = Color(0xFFFA2D55), // Apple Music Accent Red
+                contentColor = Color.White,
+                shape = CircleShape,
+                modifier = Modifier.padding(bottom = 8.dp)
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Project")
             }
@@ -104,9 +109,17 @@ fun HomeScreen(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Search projects or tech stack...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                shape = CircleShape
+                placeholder = { Text("Search projects or tech stack...", color = Color.White.copy(alpha = 0.5f)) },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.White.copy(alpha = 0.6f)) },
+                shape = CircleShape,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedBorderColor = Color(0xFFFA2D55),
+                    unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
+                    focusedContainerColor = Color.White.copy(alpha = 0.05f),
+                    unfocusedContainerColor = Color.White.copy(alpha = 0.02f)
+                )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -125,13 +138,13 @@ fun HomeScreen(
                             imageVector = Icons.Default.FolderOpen,
                             contentDescription = null,
                             modifier = Modifier.size(64.dp),
-                            tint = MaterialTheme.colorScheme.outline
+                            tint = Color(0xFF8E8E93)
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
                         Text(
                             text = "No projects found",
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.outline
+                            color = Color(0xFF8E8E93)
                         )
                     }
                 }
@@ -139,10 +152,10 @@ fun HomeScreen(
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 items(filteredProjects, key = { it.id }) { project ->
-                    GlassCard(
+                    AppleGlassCard(
                         isGlassmorphism = isGlassmorphism,
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -153,39 +166,55 @@ fun HomeScreen(
                         ) {
                             Text(
                                 text = project.title,
-                                style = MaterialTheme.typography.titleLarge,
-                                color = MaterialTheme.colorScheme.onSurface
+                                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
+                                color = Color.White
                             )
-                            SuggestionChip(
-                                onClick = {},
-                                label = { Text(project.category) }
-                            )
+                            Surface(
+                                shape = CircleShape,
+                                color = Color.White.copy(alpha = 0.12f)
+                            ) {
+                                Text(
+                                    text = project.category,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = Color.White.copy(alpha = 0.85f),
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                                )
+                            }
                         }
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(6.dp))
                         Text(
                             text = project.description,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = Color.White.copy(alpha = 0.70f)
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         Text(
                             text = "Tech: ${project.techStack}",
                             style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary
+                            color = Color(0xFFFA2D55) // Apple Accent Color
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(14.dp))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             if (project.githubUrl.isNotBlank()) {
-                                FilledTonalButton(
+                                Button(
                                     onClick = {
-                                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(project.githubUrl))
+                                        val validUrl = if (!project.githubUrl.startsWith("http://") && !project.githubUrl.startsWith("https://")) {
+                                            "https://${project.githubUrl}"
+                                        } else project.githubUrl
+                                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(validUrl))
                                         context.startActivity(intent)
-                                    }
+                                    },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color.White.copy(alpha = 0.15f),
+                                        contentColor = Color.White
+                                    ),
+                                    shape = CircleShape
                                 ) {
-                                    Icon(Icons.Default.Code, contentDescription = null, modifier = Modifier.size(18.dp))
+                                    Icon(Icons.Default.Code, contentDescription = null, modifier = Modifier.size(16.dp))
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Text("Repository")
                                 }
@@ -194,7 +223,7 @@ fun HomeScreen(
                                 Icon(
                                     imageVector = Icons.Default.DeleteOutline,
                                     contentDescription = "Delete",
-                                    tint = MaterialTheme.colorScheme.error
+                                    tint = Color(0xFFFF453A) // Apple Soft Red
                                 )
                             }
                         }

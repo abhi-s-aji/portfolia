@@ -8,6 +8,8 @@ import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -49,12 +51,18 @@ fun ProjectFormScreen(
     var githubUrl by remember { mutableStateOf("") }
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
-                title = { Text("New Project") },
+                title = { Text("New Project", color = Color.White, fontWeight = FontWeight.Bold) },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.White
+                        )
                     }
                 }
             )
@@ -71,32 +79,72 @@ fun ProjectFormScreen(
                 value = title,
                 onValueChange = { title = it },
                 label = { Text("Project Title") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedBorderColor = Color(0xFFFA2D55),
+                    unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
+                    focusedLabelColor = Color(0xFFFA2D55),
+                    unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
+                )
             )
             OutlinedTextField(
                 value = description,
                 onValueChange = { description = it },
                 label = { Text("Description") },
                 modifier = Modifier.fillMaxWidth(),
-                minLines = 2
+                minLines = 2,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedBorderColor = Color(0xFFFA2D55),
+                    unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
+                    focusedLabelColor = Color(0xFFFA2D55),
+                    unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
+                )
             )
             OutlinedTextField(
                 value = category,
                 onValueChange = { category = it },
                 label = { Text("Category (e.g. Android, Web)") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedBorderColor = Color(0xFFFA2D55),
+                    unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
+                    focusedLabelColor = Color(0xFFFA2D55),
+                    unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
+                )
             )
             OutlinedTextField(
                 value = techStack,
                 onValueChange = { techStack = it },
                 label = { Text("Tech Stack (e.g. Kotlin, Compose)") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedBorderColor = Color(0xFFFA2D55),
+                    unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
+                    focusedLabelColor = Color(0xFFFA2D55),
+                    unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
+                )
             )
             OutlinedTextField(
                 value = githubUrl,
                 onValueChange = { githubUrl = it },
                 label = { Text("GitHub Repository Link") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedBorderColor = Color(0xFFFA2D55),
+                    unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
+                    focusedLabelColor = Color(0xFFFA2D55),
+                    unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
+                )
             )
             Spacer(modifier = Modifier.weight(1f))
             Button(
@@ -105,7 +153,8 @@ fun ProjectFormScreen(
                         viewModel.saveProject(title, description, category, techStack, githubUrl, onProjectSaved)
                     }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFA2D55))
             ) {
                 Icon(Icons.Default.Save, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))

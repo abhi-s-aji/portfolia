@@ -2,17 +2,22 @@ package com.example.portfolia.ui.navigation
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.portfolia.ui.components.AmbientGlassBackground
 import com.example.portfolia.ui.screens.*
 
 sealed class Screen(val route: String, val title: String, val icon: @Composable () -> Unit) {
@@ -38,62 +43,79 @@ fun MainScreen() {
         Screen.Settings
     )
 
-    Scaffold(
-        bottomBar = {
-            if (currentRoute in bottomBarScreens.map { it.route }) {
-                NavigationBar {
-                    bottomBarScreens.forEach { screen ->
-                        NavigationBarItem(
-                            icon = screen.icon,
-                            label = { Text(screen.title) },
-                            selected = currentRoute == screen.route,
-                            onClick = {
-                                navController.navigate(screen.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
+    AmbientGlassBackground(enabled = isGlassmorphism) {
+        Scaffold(
+            containerColor = Color.Transparent,
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            bottomBar = {
+                if (currentRoute in bottomBarScreens.map { it.route }) {
+                    NavigationBar(
+                        containerColor = if (isGlassmorphism) Color.Black.copy(alpha = 0.55f) else Color(0xFF1C1C1E),
+                        contentColor = Color.White,
+                        tonalElevation = 0.dp,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 12.dp)
+                            .clip(RoundedCornerShape(32.dp))
+                    ) {
+                        bottomBarScreens.forEach { screen ->
+                            val isSelected = currentRoute == screen.route
+                            NavigationBarItem(
+                                icon = screen.icon,
+                                label = { Text(screen.title) },
+                                selected = isSelected,
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = Color.White,
+                                    unselectedIconColor = Color(0xFF8E8E93),
+                                    selectedTextColor = Color.White,
+                                    unselectedTextColor = Color(0xFF8E8E93),
+                                    indicatorColor = Color(0xFFFA2D55).copy(alpha = 0.30f) // Apple Accent Glow
+                                ),
+                                onClick = {
+                                    navController.navigate(screen.route) {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
                                     }
-                                    launchSingleTop = true
-                                    restoreState = true
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
                 }
             }
-        }
-    ) { padding ->
-        NavHost(
-            navController = navController,
-            startDestination = Screen.Projects.route,
-            modifier = Modifier.padding(padding),
-            enterTransition = { fadeIn(tween(200)) + slideInVertically { it / 8 } },
-            exitTransition = { fadeOut(tween(200)) + slideOutVertically { -it / 8 } },
-            popEnterTransition = { fadeIn(tween(200)) + slideInVertically { -it / 8 } },
-            popExitTransition = { fadeOut(tween(200)) + slideOutVertically { it / 8 } }
-        ) {
-            composable(Screen.Projects.route) {
-                HomeScreen(
-                    isGlassmorphism = isGlassmorphism,
-                    onAddProjectClick = { navController.navigate(Screen.AddProject.route) }
-                )
-            }
-            composable(Screen.References.route) {
-                ReferencesScreen(isGlassmorphism = isGlassmorphism)
-            }
-            composable(Screen.Profile.route) {
-                ProfileScreen(isGlassmorphism = isGlassmorphism)
-            }
-            composable(Screen.Settings.route) {
-                SettingsScreen(
-                    isGlassmorphism = isGlassmorphism,
-                    onGlassmorphismToggle = { isGlassmorphism = it }
-                )
-            }
-            composable(Screen.AddProject.route) {
-                ProjectFormScreen(
-                    onBackClick = { navController.popBackStack() },
-                    onProjectSaved = { navController.popBackStack() }
-                )
+        ) { padding ->
+            NavHost(
+                navController = navController,
+                startDestination = Screen.Projects.route,
+                modifier = Modifier.padding(padding),
+                enterTransition = { fadeIn(tween(200)) },
+                exitTransition = { fadeOut(tween(200)) }
+            ) {
+                composable(Screen.Projects.route) {
+                    HomeScreen(
+                        isGlassmorphism = isGlassmorphism,
+                        onAddProjectClick = { navController.navigate(Screen.AddProject.route) }
+                    )
+                }
+                composable(Screen.References.route) {
+                    ReferencesScreen(isGlassmorphism = isGlassmorphism)
+                }
+                composable(Screen.Profile.route) {
+                    ProfileScreen(isGlassmorphism = isGlassmorphism)
+                }
+                composable(Screen.Settings.route) {
+                    SettingsScreen(
+                        isGlassmorphism = isGlassmorphism,
+                        onGlassmorphismToggle = { isGlassmorphism = it }
+                    )
+                }
+                composable(Screen.AddProject.route) {
+                    ProjectFormScreen(
+                        onBackClick = { navController.popBackStack() },
+                        onProjectSaved = { navController.popBackStack() }
+                    )
+                }
             }
         }
     }

@@ -6,20 +6,23 @@ import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.portfolia.PortfoliaApp
 import com.example.portfolia.data.ReferenceEntity
-import com.example.portfolia.ui.components.GlassCard
+import com.example.portfolia.ui.components.AppleGlassCard
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -58,18 +61,28 @@ fun ReferencesScreen(
     var notes by remember { mutableStateOf("") }
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
-                title = { Text("Saved Links & References") },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
+                title = {
+                    Text(
+                        "Saved Links & References",
+                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                        color = Color.White
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddDialog = true },
-                containerColor = MaterialTheme.colorScheme.primaryContainer
+                containerColor = Color(0xFFFA2D55), // Apple Music Accent Red
+                contentColor = Color.White,
+                shape = CircleShape,
+                modifier = Modifier.padding(bottom = 8.dp)
             ) {
-                Icon(Icons.Default.AddLink, contentDescription = "Add Link")
+                Icon(Icons.Default.Add, contentDescription = "Add Link")
             }
         }
     ) { padding ->
@@ -86,19 +99,23 @@ fun ReferencesScreen(
                             Icons.Default.BookmarkBorder,
                             contentDescription = null,
                             modifier = Modifier.size(64.dp),
-                            tint = MaterialTheme.colorScheme.outline
+                            tint = Color(0xFF8E8E93)
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text("No saved links yet. Tap + to bookmark docs or repos!")
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            "No links saved yet",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color(0xFF8E8E93)
+                        )
                     }
                 }
             } else {
                 LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(references, key = { it.id }) { ref ->
-                        GlassCard(isGlassmorphism = isGlassmorphism) {
+                        AppleGlassCard(isGlassmorphism = isGlassmorphism) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -106,32 +123,61 @@ fun ReferencesScreen(
                             ) {
                                 Text(
                                     text = ref.title,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.primary
+                                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
+                                    color = Color.White
                                 )
-                                SuggestionChip(onClick = {}, label = { Text(ref.category) })
+                                Surface(
+                                    shape = CircleShape,
+                                    color = Color.White.copy(alpha = 0.12f)
+                                ) {
+                                    Text(
+                                        text = ref.category,
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = Color.White.copy(alpha = 0.85f),
+                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                                    )
+                                }
                             }
                             if (ref.notes.isNotBlank()) {
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(text = ref.notes, style = MaterialTheme.typography.bodyMedium)
+                                Spacer(modifier = Modifier.height(6.dp))
+                                Text(
+                                    text = ref.notes,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color.White.copy(alpha = 0.70f)
+                                )
                             }
-                            Spacer(modifier = Modifier.height(12.dp))
+                            Spacer(modifier = Modifier.height(14.dp))
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                FilledTonalButton(
+                                Button(
                                     onClick = {
-                                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(ref.url))
-                                        context.startActivity(intent)
-                                    }
+                                        if (ref.url.isNotBlank()) {
+                                            val validUrl = if (!ref.url.startsWith("http://") && !ref.url.startsWith("https://")) {
+                                                "https://${ref.url}"
+                                            } else ref.url
+                                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(validUrl))
+                                            context.startActivity(intent)
+                                        }
+                                    },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color.White.copy(alpha = 0.15f),
+                                        contentColor = Color.White
+                                    ),
+                                    shape = CircleShape
                                 ) {
                                     Icon(Icons.Default.OpenInNew, contentDescription = null, modifier = Modifier.size(16.dp))
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Text("Open Link")
                                 }
                                 IconButton(onClick = { viewModel.deleteReference(ref) }) {
-                                    Icon(Icons.Default.DeleteOutline, contentDescription = "Delete", tint = MaterialTheme.colorScheme.error)
+                                    Icon(
+                                        Icons.Default.DeleteOutline,
+                                        contentDescription = "Delete",
+                                        tint = Color(0xFFFF453A) // Apple Soft Red
+                                    )
                                 }
                             }
                         }
@@ -143,28 +189,80 @@ fun ReferencesScreen(
         if (showAddDialog) {
             AlertDialog(
                 onDismissRequest = { showAddDialog = false },
-                title = { Text("Save Useful Reference") },
+                containerColor = Color(0xFF1C1C1E),
+                title = { Text("Save Reference Link", color = Color.White) },
                 text = {
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("Title") })
-                        OutlinedTextField(value = url, onValueChange = { url = it }, label = { Text("URL (https://...)") })
-                        OutlinedTextField(value = category, onValueChange = { category = it }, label = { Text("Category (e.g. Docs, API)") })
-                        OutlinedTextField(value = notes, onValueChange = { notes = it }, label = { Text("Notes") })
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        OutlinedTextField(
+                            value = title,
+                            onValueChange = { title = it },
+                            label = { Text("Title") },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                focusedBorderColor = Color(0xFFFA2D55),
+                                unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
+                                focusedLabelColor = Color(0xFFFA2D55),
+                                unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
+                            )
+                        )
+                        OutlinedTextField(
+                            value = url,
+                            onValueChange = { url = it },
+                            label = { Text("URL (e.g. github.com)") },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                focusedBorderColor = Color(0xFFFA2D55),
+                                unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
+                                focusedLabelColor = Color(0xFFFA2D55),
+                                unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
+                            )
+                        )
+                        OutlinedTextField(
+                            value = category,
+                            onValueChange = { category = it },
+                            label = { Text("Category") },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                focusedBorderColor = Color(0xFFFA2D55),
+                                unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
+                                focusedLabelColor = Color(0xFFFA2D55),
+                                unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
+                            )
+                        )
+                        OutlinedTextField(
+                            value = notes,
+                            onValueChange = { notes = it },
+                            label = { Text("Notes / Description") },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                focusedBorderColor = Color(0xFFFA2D55),
+                                unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
+                                focusedLabelColor = Color(0xFFFA2D55),
+                                unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
+                            )
+                        )
                     }
                 },
                 confirmButton = {
-                    Button(onClick = {
-                        if (title.isNotBlank() && url.isNotBlank()) {
-                            viewModel.addReference(title, url, if (category.isBlank()) "General" else category, notes)
-                            title = ""; url = ""; category = ""; notes = ""
-                            showAddDialog = false
-                        }
-                    }) {
+                    Button(
+                        onClick = {
+                            if (title.isNotBlank() && url.isNotBlank()) {
+                                viewModel.addReference(title, url, if (category.isBlank()) "General" else category, notes)
+                                title = ""; url = ""; category = ""; notes = ""
+                                showAddDialog = false
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFA2D55))
+                    ) {
                         Text("Save")
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { showAddDialog = false }) { Text("Cancel") }
+                    TextButton(onClick = { showAddDialog = false }) { Text("Cancel", color = Color.White.copy(alpha = 0.7f)) }
                 }
             )
         }
