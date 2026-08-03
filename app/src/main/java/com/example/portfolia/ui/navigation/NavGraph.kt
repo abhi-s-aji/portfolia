@@ -3,6 +3,7 @@ package com.example.portfolia.ui.navigation
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -41,6 +42,7 @@ fun MainScreen() {
     val settingsDataStore = remember { SettingsDataStore(context) }
 
     val isOnboardingCompleted by settingsDataStore.isOnboardingCompleted.collectAsState(initial = null)
+    val themeMode by settingsDataStore.themeMode.collectAsState(initial = "SYSTEM")
     val currentAccent = ThemeAccent.OBSIDIAN_DARK
 
     val navController = rememberNavController()
@@ -59,7 +61,13 @@ fun MainScreen() {
         return
     }
 
-    PortfoliaTheme {
+    PortfoliaTheme(themeMode = themeMode) {
+        val isDark = when (themeMode) {
+            "DARK" -> true
+            "LIGHT" -> false
+            else -> isSystemInDarkTheme()
+        }
+
         if (isOnboardingCompleted == false) {
             OnboardingScreen(
                 accent = currentAccent,
@@ -74,8 +82,8 @@ fun MainScreen() {
                     bottomBar = {
                         if (currentRoute in bottomBarScreens.map { it.route }) {
                             NavigationBar(
-                                containerColor = Color(0xFF18181A),
-                                contentColor = Color.White,
+                                containerColor = if (isDark) Color(0xFF18181A) else Color(0xFFFFFFFF),
+                                contentColor = if (isDark) Color.White else Color(0xFF1C1C1E),
                                 tonalElevation = 0.dp,
                                 modifier = Modifier
                                     .padding(horizontal = 16.dp, vertical = 12.dp)
@@ -89,11 +97,11 @@ fun MainScreen() {
                                         label = { Text(screen.title) },
                                         selected = isSelected,
                                         colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor = Color.White,
+                                            selectedIconColor = if (isDark) Color.White else Color(0xFF1C1C1E),
                                             unselectedIconColor = Color(0xFF8E8E93),
-                                            selectedTextColor = Color.White,
+                                            selectedTextColor = if (isDark) Color.White else Color(0xFF1C1C1E),
                                             unselectedTextColor = Color(0xFF8E8E93),
-                                            indicatorColor = Color(0xFF2C2C2E)
+                                            indicatorColor = if (isDark) Color(0xFF2C2C2E) else Color(0xFFE5E5EA)
                                         ),
                                         onClick = {
                                             navController.navigate(screen.route) {

@@ -17,6 +17,7 @@ class SettingsDataStore(private val context: Context) {
         val LAYOUT_DENSITY = stringPreferencesKey("layout_density")
         val DEFAULT_EXPORT_FORMAT = stringPreferencesKey("default_export_format")
         val DEFAULT_WEBSITE_VIBE = stringPreferencesKey("default_website_vibe")
+        val THEME_MODE = stringPreferencesKey("theme_mode")
     }
 
     val isOnboardingCompleted: Flow<Boolean> = context.dataStore.data.map { preferences ->
@@ -37,6 +38,10 @@ class SettingsDataStore(private val context: Context) {
 
     val defaultWebsiteVibe: Flow<String> = context.dataStore.data.map { preferences ->
         preferences[DEFAULT_WEBSITE_VIBE] ?: "OBSIDIAN_DARK"
+    }
+
+    val themeMode: Flow<String> = context.dataStore.data.map { preferences ->
+        preferences[THEME_MODE] ?: "SYSTEM"
     }
 
     suspend fun setOnboardingCompleted(completed: Boolean) {
@@ -66,6 +71,12 @@ class SettingsDataStore(private val context: Context) {
     suspend fun setDefaultWebsiteVibe(vibe: String) {
         context.dataStore.edit { preferences ->
             preferences[DEFAULT_WEBSITE_VIBE] = vibe
+        }
+    }
+
+    suspend fun setThemeMode(mode: String) {
+        context.dataStore.edit { preferences ->
+            preferences[THEME_MODE] = mode
         }
     }
 

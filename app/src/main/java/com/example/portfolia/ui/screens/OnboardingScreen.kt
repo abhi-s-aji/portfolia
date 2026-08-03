@@ -7,6 +7,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -121,8 +122,12 @@ fun OnboardingScreen(
 
     val presets = listOf("preset:💻", "preset:🚀", "preset:🎨", "preset:🛠️", "preset:⚙️")
 
+    val isDark = MaterialTheme.colorScheme.background == Color(0xFF141415)
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val subTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+
     Scaffold(
-        containerColor = Color(0xFF141415), // Deep Charcoal Black Canvas
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = {
@@ -130,7 +135,7 @@ fun OnboardingScreen(
                         text = if (isEditMode) "Edit Profile Details" else "PORTFOLIA_V1 // INITIAL SETUP",
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White,
+                        color = textColor,
                         style = MaterialTheme.typography.titleMedium
                     )
                 },
@@ -140,7 +145,7 @@ fun OnboardingScreen(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Back",
-                                tint = Color.White
+                                tint = textColor
                             )
                         }
                     }
@@ -162,7 +167,7 @@ fun OnboardingScreen(
                 Text(
                     text = "Welcome to Portfolia. Let's configure your digital credentials to establish your professional profile.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF8E8E93), // Secondary Slate Grey Text
+                    color = subTextColor,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
@@ -177,15 +182,15 @@ fun OnboardingScreen(
                     text = "Profile Avatar",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = textColor
                 )
                 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(16.dp))
-                        .background(Color(0xFF1E1E20))
-                        .border(1.dp, Color(0xFF2A2A2D), RoundedCornerShape(16.dp))
+                        .background(if (isDark) Color(0xFF1E1E20) else Color(0xFFFFFFFF))
+                        .border(1.dp, if (isDark) Color(0xFF2A2A2D) else Color(0xFFE5E5EA), RoundedCornerShape(16.dp))
                         .padding(14.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -194,8 +199,8 @@ fun OnboardingScreen(
                         modifier = Modifier
                             .size(64.dp)
                             .clip(CircleShape)
-                            .background(Color.White.copy(alpha = 0.05f))
-                            .border(1.dp, Color(0xFF2A2A2D), CircleShape),
+                            .background(if (isDark) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.05f))
+                            .border(1.dp, if (isDark) Color(0xFF2A2A2D) else Color(0xFFE5E5EA), CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
                         val avatar = viewModel.selectedAvatar
@@ -205,7 +210,7 @@ fun OnboardingScreen(
                         } else if (avatar != null) {
                             AsyncImage(
                                 model = avatar,
-                                contentDescription = "Custom Avatar",
+                                contentDescription = "Avatar",
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop
                             )
@@ -225,16 +230,22 @@ fun OnboardingScreen(
                                     modifier = Modifier
                                         .size(30.dp)
                                         .clip(CircleShape)
-                                        .background(if (isSelected) Color.White.copy(alpha = 0.2f) else Color.White.copy(alpha = 0.05f))
+                                        .background(
+                                            if (isSelected) {
+                                                if (isDark) Color.White.copy(alpha = 0.2f) else Color.Black.copy(alpha = 0.15f)
+                                            } else {
+                                                if (isDark) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.05f)
+                                            }
+                                        )
                                         .border(
                                             width = 1.dp,
-                                            color = if (isSelected) Color.White else Color.Transparent,
+                                            color = if (isSelected) textColor else Color.Transparent,
                                             shape = CircleShape
                                         )
                                         .clickable { viewModel.selectedAvatar = preset },
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Text(text = preset.removePrefix("preset:"), style = MaterialTheme.typography.bodySmall)
+                                    Text(text = preset.removePrefix("preset:"), style = MaterialTheme.typography.bodySmall, color = textColor)
                                 }
                             }
                         }
@@ -246,16 +257,17 @@ fun OnboardingScreen(
                                 )
                             },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.White.copy(alpha = 0.08f),
-                                contentColor = Color.White
+                                containerColor = if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.05f),
+                                contentColor = textColor
                             ),
+                            border = BorderStroke(1.dp, if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.1f)),
                             shape = RoundedCornerShape(6.dp),
                             contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                             modifier = Modifier.height(28.dp)
                         ) {
-                            Icon(Icons.Default.PhotoCamera, contentDescription = null, modifier = Modifier.size(12.dp))
+                            Icon(Icons.Default.PhotoCamera, contentDescription = null, modifier = Modifier.size(12.dp), tint = textColor)
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Custom Image", style = MaterialTheme.typography.labelSmall)
+                            Text("Custom Image", style = MaterialTheme.typography.labelSmall, color = textColor)
                         }
                     }
                 }
@@ -270,18 +282,18 @@ fun OnboardingScreen(
                     text = "Professional Identity",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = textColor
                 )
 
                 val inputColors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color(0xFF1E1E20),
-                    unfocusedContainerColor = Color(0xFF1E1E20),
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedLabelColor = Color.White,
-                    unfocusedLabelColor = Color(0xFF8E8E93),
-                    focusedBorderColor = Color.White,
-                    unfocusedBorderColor = Color(0xFF2A2A2D)
+                    focusedContainerColor = if (isDark) Color(0xFF1E1E20) else Color(0xFFFFFFFF),
+                    unfocusedContainerColor = if (isDark) Color(0xFF1E1E20) else Color(0xFFFFFFFF),
+                    focusedTextColor = textColor,
+                    unfocusedTextColor = textColor,
+                    focusedLabelColor = textColor,
+                    unfocusedLabelColor = subTextColor,
+                    focusedBorderColor = textColor,
+                    unfocusedBorderColor = if (isDark) Color(0xFF2A2A2D) else Color(0xFFE5E5EA)
                 )
 
                 OutlinedTextField(
@@ -335,18 +347,18 @@ fun OnboardingScreen(
                     text = "Contact & Social Channels",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = textColor
                 )
 
                 val inputColors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color(0xFF1E1E20),
-                    unfocusedContainerColor = Color(0xFF1E1E20),
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedLabelColor = Color.White,
-                    unfocusedLabelColor = Color(0xFF8E8E93),
-                    focusedBorderColor = Color.White,
-                    unfocusedBorderColor = Color(0xFF2A2A2D)
+                    focusedContainerColor = if (isDark) Color(0xFF1E1E20) else Color(0xFFFFFFFF),
+                    unfocusedContainerColor = if (isDark) Color(0xFF1E1E20) else Color(0xFFFFFFFF),
+                    focusedTextColor = textColor,
+                    unfocusedTextColor = textColor,
+                    focusedLabelColor = textColor,
+                    unfocusedLabelColor = subTextColor,
+                    focusedBorderColor = textColor,
+                    unfocusedBorderColor = if (isDark) Color(0xFF2A2A2D) else Color(0xFFE5E5EA)
                 )
 
                 OutlinedTextField(
@@ -392,11 +404,14 @@ fun OnboardingScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White, contentColor = Color.Black),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isDark) Color.White else Color.Black,
+                    contentColor = if (isDark) Color.Black else Color.White
+                ),
                 shape = RoundedCornerShape(10.dp),
                 enabled = viewModel.name.isNotBlank() && viewModel.title.isNotBlank()
             ) {
-                Icon(Icons.Default.Check, contentDescription = null)
+                Icon(Icons.Default.Check, contentDescription = null, tint = if (isDark) Color.Black else Color.White)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = if (isEditMode) "Save Profile Details" else "Complete Wizard Setup",

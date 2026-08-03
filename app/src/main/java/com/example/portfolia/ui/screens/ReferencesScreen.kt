@@ -104,6 +104,10 @@ fun ReferencesScreen(
         else references.filter { it.groupName == selectedTab }
     }
 
+    val isDark = MaterialTheme.colorScheme.background == Color(0xFF141415)
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val subTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
@@ -112,7 +116,7 @@ fun ReferencesScreen(
                     Text(
                         "Saved Links & References",
                         style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                        color = Color.White
+                        color = textColor
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
@@ -121,19 +125,23 @@ fun ReferencesScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddDialog = true },
-                containerColor = Color.White,
-                contentColor = Color.Black,
+                containerColor = if (isDark) Color.White else Color.Black,
+                contentColor = if (isDark) Color.Black else Color.White,
                 shape = CircleShape,
                 modifier = Modifier.padding(bottom = 8.dp)
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Add Link", tint = Color.Black)
+                Icon(
+                    imageVector = Icons.Default.Add, 
+                    contentDescription = "Add Link", 
+                    tint = if (isDark) Color.Black else Color.White
+                )
             }
         }
-    ) { padding ->
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
+                .padding(paddingValues)
                 .padding(horizontal = 14.dp)
         ) {
             // Tab Filter Bar (Horizontal Scrollable Chips Row)
@@ -147,13 +155,24 @@ fun ReferencesScreen(
                 ) {
                     tabs.forEach { tab ->
                         val isSelected = selectedTab == tab
-                        val bg by animateColorAsState(targetValue = if (isSelected) Color(0xFF2C2C2E) else Color(0xFF1E1E20))
-                        val textCol by animateColorAsState(targetValue = if (isSelected) Color.White else Color(0xFF8E8E93))
+                        val bg by animateColorAsState(
+                            targetValue = if (isSelected) {
+                                if (isDark) Color(0xFF2C2C2E) else Color(0xFFE5E5EA)
+                            } else {
+                                if (isDark) Color(0xFF1E1E20) else Color(0xFFFFFFFF)
+                            }
+                        )
+                        val textCol by animateColorAsState(targetValue = if (isSelected) textColor else subTextColor)
 
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(20.dp))
                                 .background(bg)
+                                .border(
+                                    1.dp,
+                                    if (isSelected) Color.Transparent else if (isDark) Color(0xFF2A2A2D) else Color(0xFFE5E5EA),
+                                    RoundedCornerShape(20.dp)
+                                )
                                 .clickable {
                                     view.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
                                     selectedTab = tab
@@ -204,16 +223,16 @@ fun ReferencesScreen(
                                 Text(
                                     text = ref.title,
                                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
-                                    color = Color.White
+                                    color = textColor
                                 )
                                 Surface(
                                     shape = CircleShape,
-                                    color = Color.White.copy(alpha = 0.08f)
+                                    color = if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.05f)
                                 ) {
                                     Text(
                                         text = ref.category,
                                         style = MaterialTheme.typography.labelSmall,
-                                        color = Color.White.copy(alpha = 0.6f),
+                                        color = textColor.copy(alpha = 0.8f),
                                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
                                     )
                                 }
@@ -223,7 +242,7 @@ fun ReferencesScreen(
                                 Text(
                                     text = ref.notes,
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.White.copy(alpha = 0.70f)
+                                    color = subTextColor
                                 )
                             }
                             Spacer(modifier = Modifier.height(14.dp))
@@ -243,14 +262,14 @@ fun ReferencesScreen(
                                         }
                                     },
                                     colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color.White.copy(alpha = 0.15f),
-                                        contentColor = Color.White
+                                        containerColor = if (isDark) Color.White.copy(alpha = 0.15f) else Color.Black.copy(alpha = 0.05f),
+                                        contentColor = textColor
                                     ),
                                     shape = CircleShape
                                 ) {
-                                    Icon(Icons.Default.OpenInNew, contentDescription = null, modifier = Modifier.size(16.dp))
+                                    Icon(Icons.Default.OpenInNew, contentDescription = null, modifier = Modifier.size(16.dp), tint = textColor)
                                     Spacer(modifier = Modifier.width(6.dp))
-                                    Text("Open Link")
+                                    Text("Open Link", color = textColor)
                                 }
                                 IconButton(onClick = {
                                     view.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
@@ -274,19 +293,19 @@ fun ReferencesScreen(
 
             AlertDialog(
                 onDismissRequest = { showAddDialog = false },
-                containerColor = Color(0xFF1E1E20),
+                containerColor = if (isDark) Color(0xFF1E1E20) else Color(0xFFFFFFFF),
                 tonalElevation = 0.dp,
-                title = { Text("Save Reference Link", color = Color.White) },
+                title = { Text("Save Reference Link", color = textColor) },
                 text = {
                     val inputColors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = Color(0xFF1E1E20),
-                        unfocusedContainerColor = Color(0xFF1E1E20),
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedLabelColor = Color.White,
-                        unfocusedLabelColor = Color(0xFF8E8E93),
-                        focusedBorderColor = Color.White,
-                        unfocusedBorderColor = Color(0xFF2A2A2D)
+                        focusedContainerColor = if (isDark) Color(0xFF1E1E20) else Color(0xFFFFFFFF),
+                        unfocusedContainerColor = if (isDark) Color(0xFF1E1E20) else Color(0xFFFFFFFF),
+                        focusedTextColor = textColor,
+                        unfocusedTextColor = textColor,
+                        focusedLabelColor = textColor,
+                        unfocusedLabelColor = subTextColor,
+                        focusedBorderColor = textColor,
+                        unfocusedBorderColor = if (isDark) Color(0xFF2A2A2D) else Color(0xFFE5E5EA)
                     )
                     Column(
                         verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -319,15 +338,15 @@ fun ReferencesScreen(
                             Text(
                                 text = "Folder / Group Selection",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.White.copy(alpha = 0.5f)
+                                color = textColor.copy(alpha = 0.5f)
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clip(RoundedCornerShape(8.dp))
-                                    .background(Color(0xFF1E1E20))
-                                    .border(1.dp, Color(0xFF2A2A2D), RoundedCornerShape(8.dp))
+                                    .background(if (isDark) Color(0xFF1E1E20) else Color(0xFFFFFFFF))
+                                    .border(1.dp, if (isDark) Color(0xFF2A2A2D) else Color(0xFFE5E5EA), RoundedCornerShape(8.dp))
                                     .clickable { dropdownExpanded = !dropdownExpanded }
                                     .padding(12.dp)
                             ) {
@@ -338,12 +357,12 @@ fun ReferencesScreen(
                                 ) {
                                     Text(
                                         text = if (isCreatingCustomGroup) "Custom Group" else selectedGroupDropdown,
-                                        color = Color.White
+                                        color = textColor
                                     )
                                     Icon(
                                         imageVector = if (dropdownExpanded) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
                                         contentDescription = null,
-                                        tint = Color.White
+                                        tint = textColor
                                     )
                                 }
                             }
@@ -352,12 +371,12 @@ fun ReferencesScreen(
                                 expanded = dropdownExpanded,
                                 onDismissRequest = { dropdownExpanded = false },
                                 modifier = Modifier
-                                    .background(Color(0xFF1E1E20))
-                                    .border(1.dp, Color(0xFF2A2A2D), RoundedCornerShape(4.dp))
+                                    .background(if (isDark) Color(0xFF1E1E20) else Color(0xFFFFFFFF))
+                                    .border(1.dp, if (isDark) Color(0xFF2A2A2D) else Color(0xFFE5E5EA), RoundedCornerShape(4.dp))
                             ) {
                                 dynamicFolders.forEach { folder ->
                                     DropdownMenuItem(
-                                        text = { Text(folder, color = Color.White) },
+                                        text = { Text(folder, color = textColor) },
                                         onClick = {
                                             selectedGroupDropdown = folder
                                             isCreatingCustomGroup = false
@@ -366,7 +385,7 @@ fun ReferencesScreen(
                                     )
                                 }
                                 DropdownMenuItem(
-                                    text = { Text("+ Create New Folder...", color = Color.White) },
+                                    text = { Text("+ Create New Folder...", color = textColor) },
                                     onClick = {
                                         isCreatingCustomGroup = true
                                         dropdownExpanded = false
@@ -414,13 +433,16 @@ fun ReferencesScreen(
                                 showAddDialog = false
                             }
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.White, contentColor = Color.Black)
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isDark) Color.White else Color.Black,
+                            contentColor = if (isDark) Color.Black else Color.White
+                        )
                     ) {
                         Text("Save", fontWeight = FontWeight.Bold)
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { showAddDialog = false }) { Text("Cancel", color = Color.White.copy(alpha = 0.7f)) }
+                    TextButton(onClick = { showAddDialog = false }) { Text("Cancel", color = subTextColor) }
                 }
             )
         }

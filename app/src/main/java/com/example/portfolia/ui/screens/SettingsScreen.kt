@@ -5,6 +5,8 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,7 +15,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -131,11 +135,15 @@ fun SettingsScreen(
         }
     }
 
+    val isDark = MaterialTheme.colorScheme.background == Color(0xFF141415)
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val subTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
-                title = { Text("Settings", color = Color.White, fontWeight = FontWeight.Bold) },
+                title = { Text("Settings", color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
             )
         }
@@ -151,27 +159,87 @@ fun SettingsScreen(
             // 1. PROFILE MANAGEMENT CARD
             AppleGlassCard(modifier = Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Profile Configuration", style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.SemiBold)
-                    Text("Modify credentials, bio contacts, or profile avatar.", style = MaterialTheme.typography.bodySmall, color = Color(0xFF989A9C))
+                    Text("Profile Configuration", style = MaterialTheme.typography.titleMedium, color = textColor, fontWeight = FontWeight.SemiBold)
+                    Text("Modify credentials, bio contacts, or profile avatar.", style = MaterialTheme.typography.bodySmall, color = subTextColor)
                     
                     Button(
                         onClick = onEditProfileClick,
                         modifier = Modifier.fillMaxWidth().height(48.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.White, contentColor = Color.Black),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isDark) Color.White else Color.Black,
+                            contentColor = if (isDark) Color.Black else Color.White
+                        ),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Icon(Icons.Default.Edit, contentDescription = null, tint = Color.Black, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.Edit, contentDescription = null, tint = if (isDark) Color.Black else Color.White, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Edit Profile Details", color = Color.Black, fontWeight = FontWeight.Bold)
+                        Text("Edit Profile Details", fontWeight = FontWeight.Bold)
                     }
                 }
             }
 
-            // 2. DATA & STORAGE MANAGEMENT CARD
+            // 2. APPEARANCE / THEME SELECTOR CARD
+            val themeMode by settingsDataStore.themeMode.collectAsState(initial = "SYSTEM")
+            AppleGlassCard(modifier = Modifier.fillMaxWidth()) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = "Appearance",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = textColor,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = "Customize application appearance theme mode.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = subTextColor
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(if (isDark) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.05f))
+                            .padding(4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        val modes = listOf("LIGHT" to "Light", "DARK" to "Dark", "SYSTEM" to "System")
+                        modes.forEach { (modeVal, label) ->
+                            val isSelected = themeMode == modeVal
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(36.dp)
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(
+                                        if (isSelected) {
+                                            if (isDark) Color.White.copy(alpha = 0.15f) else Color.Black.copy(alpha = 0.08f)
+                                        } else Color.Transparent
+                                    )
+                                    .clickable {
+                                        scope.launch {
+                                            settingsDataStore.setThemeMode(modeVal)
+                                        }
+                                    }
+                            ) {
+                                Text(
+                                    text = label,
+                                    color = if (isSelected) textColor else subTextColor,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 3. DATA & STORAGE MANAGEMENT CARD
             AppleGlassCard(modifier = Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text("Data & Storage", style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.SemiBold)
-                    Text("Export or restore your profile configurations, links, and projects list.", style = MaterialTheme.typography.bodySmall, color = Color(0xFF989A9C))
+                    Text("Data & Storage", style = MaterialTheme.typography.titleMedium, color = textColor, fontWeight = FontWeight.SemiBold)
+                    Text("Export or restore your profile configurations, links, and projects list.", style = MaterialTheme.typography.bodySmall, color = subTextColor)
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -182,13 +250,16 @@ fun SettingsScreen(
                                 jsonExportLauncher.launch("portfolia_backup.json")
                             },
                             modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.08f)),
-                            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f)),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.05f),
+                                contentColor = textColor
+                            ),
+                            border = BorderStroke(1.dp, if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.1f)),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Icon(Icons.Default.Upload, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color.White)
+                            Icon(Icons.Default.Upload, contentDescription = null, modifier = Modifier.size(16.dp), tint = textColor)
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Export Backup", color = Color.White, style = MaterialTheme.typography.labelSmall)
+                            Text("Export Backup", style = MaterialTheme.typography.labelSmall)
                         }
 
                         Button(
@@ -196,13 +267,16 @@ fun SettingsScreen(
                                 jsonImportLauncher.launch(arrayOf("application/json"))
                             },
                             modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.08f)),
-                            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f)),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.05f),
+                                contentColor = textColor
+                            ),
+                            border = BorderStroke(1.dp, if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.1f)),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Icon(Icons.Default.Download, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color.White)
+                            Icon(Icons.Default.Download, contentDescription = null, modifier = Modifier.size(16.dp), tint = textColor)
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Import Backup", color = Color.White, style = MaterialTheme.typography.labelSmall)
+                            Text("Import Backup", style = MaterialTheme.typography.labelSmall)
                         }
                     }
 
@@ -220,18 +294,18 @@ fun SettingsScreen(
                 }
             }
 
-            // 3. DEVELOPER CREDITS CARD
+            // 4. DEVELOPER CREDITS CARD
             AppleGlassCard(modifier = Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text(
                         text = "App Developer Contact",
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                        color = Color.White
+                        color = textColor
                     )
                     Text(
                         text = "Get in touch, report issues, or view social profiles.",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF8E8E93)
+                        color = subTextColor
                     )
 
                     Row(
@@ -252,12 +326,15 @@ fun SettingsScreen(
                                     } catch (e: Exception) {}
                                 },
                                 modifier = Modifier.weight(1f),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF252528)),
-                                border = BorderStroke(1.dp, Color(0xFF2A2A2D)),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = if (isDark) Color(0xFF252528) else Color(0xFFE5E5EA),
+                                    contentColor = textColor
+                                ),
+                                border = BorderStroke(1.dp, if (isDark) Color(0xFF2A2A2D) else Color(0xFFD1D1D6)),
                                 shape = RoundedCornerShape(8.dp),
                                 contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp)
                             ) {
-                                Text(label, color = Color.White, style = MaterialTheme.typography.labelSmall)
+                                Text(label, color = textColor, style = MaterialTheme.typography.labelSmall)
                             }
                         }
                     }
@@ -266,17 +343,17 @@ fun SettingsScreen(
         }
     }
 
-    // Reset confirmation Dialog
+    // Reset confirmation Dialog (Adapts container background and text color to theme mode)
     if (showResetDialog) {
         AlertDialog(
             onDismissRequest = { showResetDialog = false },
-            containerColor = Color(0xFF1E1E20),
+            containerColor = if (isDark) Color(0xFF1E1E20) else Color(0xFFFFFFFF),
             tonalElevation = 0.dp,
-            title = { Text("Reset Application Data?", color = Color.White, fontWeight = FontWeight.Bold) },
+            title = { Text("Reset Application Data?", color = textColor, fontWeight = FontWeight.Bold) },
             text = {
                 Text(
                     text = "This will permanently delete all your profiles, projects, reference links, and reset app customization preferences. This action cannot be undone.",
-                    color = Color.White.copy(alpha = 0.7f)
+                    color = subTextColor
                 )
             },
             confirmButton = {
@@ -292,14 +369,14 @@ fun SettingsScreen(
                             }
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF453A))
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF453A), contentColor = Color.White)
                 ) {
-                    Text("Yes, Reset Data", color = Color.White)
+                    Text("Yes, Reset Data", fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showResetDialog = false }) {
-                    Text("Cancel", color = Color.White.copy(alpha = 0.7f))
+                    Text("Cancel", color = subTextColor)
                 }
             }
         )

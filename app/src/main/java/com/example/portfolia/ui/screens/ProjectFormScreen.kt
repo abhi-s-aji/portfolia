@@ -87,29 +87,33 @@ fun ProjectFormScreen(
     var demoUrl by remember { mutableStateOf("") }
     var linkedinPostUrl by remember { mutableStateOf("") }
 
+    val isDark = MaterialTheme.colorScheme.background == Color(0xFF141415)
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val subTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+
     val inputColors = OutlinedTextFieldDefaults.colors(
-        focusedContainerColor = Color(0xFF1E1E20),
-        unfocusedContainerColor = Color(0xFF1E1E20),
-        focusedTextColor = Color.White,
-        unfocusedTextColor = Color.White,
-        focusedLabelColor = Color.White,
-        unfocusedLabelColor = Color(0xFF8E8E93),
-        focusedBorderColor = Color.White,
-        unfocusedBorderColor = Color(0xFF2A2A2D)
+        focusedContainerColor = if (isDark) Color(0xFF1E1E20) else Color(0xFFFFFFFF),
+        unfocusedContainerColor = if (isDark) Color(0xFF1E1E20) else Color(0xFFFFFFFF),
+        focusedTextColor = textColor,
+        unfocusedTextColor = textColor,
+        focusedLabelColor = textColor,
+        unfocusedLabelColor = subTextColor,
+        focusedBorderColor = textColor,
+        unfocusedBorderColor = if (isDark) Color(0xFF2A2A2D) else Color(0xFFE5E5EA)
     )
 
     Scaffold(
-        containerColor = Color(0xFF141415), // Deep Charcoal Black Canvas
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text("Add Project", color = Color.White, fontWeight = FontWeight.Bold) },
+                title = { Text("Add Project", color = textColor, fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = Color.White
+                            tint = textColor
                         )
                     }
                 }
@@ -245,10 +249,13 @@ fun ProjectFormScreen(
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White, contentColor = Color.Black),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isDark) Color.White else Color.Black,
+                    contentColor = if (isDark) Color.Black else Color.White
+                ),
                 enabled = title.isNotBlank()
             ) {
-                Icon(Icons.Default.Save, contentDescription = null)
+                Icon(Icons.Default.Save, contentDescription = null, tint = if (isDark) Color.Black else Color.White)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("Save Project", fontWeight = FontWeight.Bold)
             }
@@ -274,6 +281,9 @@ fun AnimatedTagChip(
         animationSpec = tween(150)
     )
 
+    val isDark = MaterialTheme.colorScheme.background == Color(0xFF141415)
+    val textColor = MaterialTheme.colorScheme.onSurface
+
     Box(
         modifier = Modifier
             .graphicsLayer {
@@ -282,8 +292,8 @@ fun AnimatedTagChip(
                 this.alpha = alpha
             }
             .clip(RoundedCornerShape(8.dp))
-            .background(Color.White.copy(alpha = 0.08f))
-            .border(1.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(8.dp))
+            .background(if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.05f))
+            .border(1.dp, if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.08f), RoundedCornerShape(8.dp))
             .clickable {
                 view.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
                 isVisible = false
@@ -294,12 +304,12 @@ fun AnimatedTagChip(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            Text(text = tag, color = Color.White, style = MaterialTheme.typography.bodySmall)
+            Text(text = tag, color = textColor, style = MaterialTheme.typography.bodySmall)
             Spacer(modifier = Modifier.width(6.dp))
             Icon(
                 imageVector = Icons.Default.Close,
                 contentDescription = "Remove Tag",
-                tint = Color.White.copy(alpha = 0.5f),
+                tint = textColor.copy(alpha = 0.5f),
                 modifier = Modifier.size(12.dp)
             )
         }

@@ -82,6 +82,10 @@ fun HomeScreen(
         }
     }
 
+    val isDark = MaterialTheme.colorScheme.background == Color(0xFF141415)
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val subTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
@@ -92,13 +96,13 @@ fun HomeScreen(
                             text = "PORTFOLIA_V1",
                             fontFamily = FontFamily.Monospace,
                             style = MaterialTheme.typography.labelLarge,
-                            color = Color.White.copy(alpha = 0.6f),
+                            color = textColor.copy(alpha = 0.6f),
                             fontWeight = FontWeight.Bold
                         )
                         Text(
                             text = profile?.name?.ifBlank { "Developer" } ?: "Developer",
                             style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                            color = Color.White
+                            color = textColor
                         )
                     }
                 },
@@ -110,12 +114,16 @@ fun HomeScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddProjectClick,
-                containerColor = Color.White,
-                contentColor = Color.Black,
+                containerColor = if (isDark) Color.White else Color.Black,
+                contentColor = if (isDark) Color.Black else Color.White,
                 shape = CircleShape,
                 modifier = Modifier.padding(bottom = 8.dp)
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Add Project")
+                Icon(
+                    imageVector = Icons.Default.Add, 
+                    contentDescription = "Add Project",
+                    tint = if (isDark) Color.Black else Color.White
+                )
             }
         }
     ) { padding ->
@@ -129,18 +137,18 @@ fun HomeScreen(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Search projects or tech stack...", color = Color.White.copy(alpha = 0.5f)) },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.White.copy(alpha = 0.6f)) },
+                placeholder = { Text("Search projects or tech stack...", color = textColor.copy(alpha = 0.5f)) },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = textColor.copy(alpha = 0.6f)) },
                 shape = CircleShape,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedBorderColor = Color.White,
-                    unfocusedBorderColor = Color(0xFF2A2A2D),
-                    focusedContainerColor = Color(0xFF1E1E20),
-                    unfocusedContainerColor = Color(0xFF1E1E20),
-                    focusedLabelColor = Color.White,
-                    unfocusedLabelColor = Color(0xFF8E8E93)
+                    focusedTextColor = textColor,
+                    unfocusedTextColor = textColor,
+                    focusedBorderColor = textColor,
+                    unfocusedBorderColor = if (isDark) Color(0xFF2A2A2D) else Color(0xFFE5E5EA),
+                    focusedContainerColor = if (isDark) Color(0xFF1E1E20) else Color(0xFFFFFFFF),
+                    unfocusedContainerColor = if (isDark) Color(0xFF1E1E20) else Color(0xFFFFFFFF),
+                    focusedLabelColor = textColor,
+                    unfocusedLabelColor = subTextColor
                 ),
                 singleLine = true
             )
@@ -156,15 +164,19 @@ fun HomeScreen(
                 Text(
                     text = "Sort by:",
                     style = MaterialTheme.typography.labelMedium,
-                    color = Color.White.copy(alpha = 0.5f),
+                    color = textColor.copy(alpha = 0.5f),
                     modifier = Modifier.padding(end = 4.dp)
                 )
                 
                 val sortingOptions = listOf("Latest", "Alphabetical", "Category")
                 sortingOptions.forEach { opt ->
                     val isSelected = sortBy == opt
-                    val bgCol by animateColorAsState(targetValue = if (isSelected) Color.White else Color.White.copy(alpha = 0.05f))
-                    val textCol by animateColorAsState(targetValue = if (isSelected) Color.Black else Color.White.copy(alpha = 0.6f))
+                    val bgCol by animateColorAsState(
+                        targetValue = if (isSelected) textColor else if (isDark) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.05f)
+                    )
+                    val textCol by animateColorAsState(
+                        targetValue = if (isSelected) MaterialTheme.colorScheme.surface else subTextColor
+                    )
                     
                     Box(
                         modifier = Modifier
@@ -230,16 +242,16 @@ fun HomeScreen(
                             Text(
                                 text = project.title,
                                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
-                                color = Color.White
+                                color = textColor
                             )
                             Surface(
                                 shape = CircleShape,
-                                color = Color.White.copy(alpha = 0.08f)
+                                color = if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.05f)
                             ) {
                                 Text(
                                     text = project.category,
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = Color.White.copy(alpha = 0.8f),
+                                    color = textColor.copy(alpha = 0.8f),
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
                                 )
                             }
@@ -248,14 +260,14 @@ fun HomeScreen(
                         Text(
                             text = project.description,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Color.White.copy(alpha = 0.70f)
+                            color = subTextColor
                         )
                         if (project.techStack.isNotEmpty()) {
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 text = "Tech: ${project.techStack.joinToString(", ")}",
                                 style = MaterialTheme.typography.labelMedium,
-                                color = Color.White,
+                                color = textColor,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -277,16 +289,16 @@ fun HomeScreen(
                                             openUrl(context, project.githubUrl)
                                         },
                                         colors = ButtonDefaults.buttonColors(
-                                            containerColor = Color.White.copy(alpha = 0.1f),
-                                            contentColor = Color.White
+                                            containerColor = if (isDark) Color.White.copy(alpha = 0.1f) else Color.Black.copy(alpha = 0.05f),
+                                            contentColor = textColor
                                         ),
                                         shape = RoundedCornerShape(8.dp),
                                         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                                         modifier = Modifier.height(32.dp)
                                     ) {
-                                        Icon(Icons.Default.Code, contentDescription = null, modifier = Modifier.size(14.dp))
+                                        Icon(Icons.Default.Code, contentDescription = null, modifier = Modifier.size(14.dp), tint = textColor)
                                         Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Repo", style = MaterialTheme.typography.labelSmall)
+                                        Text("Repo", style = MaterialTheme.typography.labelSmall, color = textColor)
                                     }
                                 }
                                 
@@ -296,16 +308,16 @@ fun HomeScreen(
                                             openUrl(context, project.demoUrl)
                                         },
                                         colors = ButtonDefaults.buttonColors(
-                                            containerColor = Color.White.copy(alpha = 0.1f),
-                                            contentColor = Color.White
+                                            containerColor = if (isDark) Color.White.copy(alpha = 0.1f) else Color.Black.copy(alpha = 0.05f),
+                                            contentColor = textColor
                                         ),
                                         shape = RoundedCornerShape(8.dp),
                                         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                                         modifier = Modifier.height(32.dp)
                                     ) {
-                                        Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null, modifier = Modifier.size(14.dp))
+                                        Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null, modifier = Modifier.size(14.dp), tint = textColor)
                                         Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Demo", style = MaterialTheme.typography.labelSmall)
+                                        Text("Demo", style = MaterialTheme.typography.labelSmall, color = textColor)
                                     }
                                 }
 
@@ -315,16 +327,16 @@ fun HomeScreen(
                                             openUrl(context, project.linkedinPostUrl)
                                         },
                                         colors = ButtonDefaults.buttonColors(
-                                            containerColor = Color.White.copy(alpha = 0.1f),
-                                            contentColor = Color.White
+                                            containerColor = if (isDark) Color.White.copy(alpha = 0.1f) else Color.Black.copy(alpha = 0.05f),
+                                            contentColor = textColor
                                         ),
                                         shape = RoundedCornerShape(8.dp),
                                         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                                         modifier = Modifier.height(32.dp)
                                     ) {
-                                        Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(14.dp))
+                                        Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(14.dp), tint = textColor)
                                         Spacer(modifier = Modifier.width(4.dp))
-                                        Text("LinkedIn", style = MaterialTheme.typography.labelSmall)
+                                        Text("LinkedIn", style = MaterialTheme.typography.labelSmall, color = textColor)
                                     }
                                 }
                             }

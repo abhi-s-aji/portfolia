@@ -89,18 +89,22 @@ fun ProfileScreen(
         }
     }
 
+    val isDark = MaterialTheme.colorScheme.background == Color(0xFF141415)
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val subTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
-                title = { Text("Developer Profile", color = Color.White, fontWeight = FontWeight.Bold) },
+                title = { Text("Developer Profile", color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                 actions = {
                     IconButton(onClick = onEditProfileClick) {
                         Icon(
                             imageVector = Icons.Default.Edit,
                             contentDescription = "Edit Profile",
-                            tint = Color.White
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 }
@@ -121,8 +125,8 @@ fun ProfileScreen(
                 modifier = Modifier
                     .size(96.dp)
                     .clip(CircleShape)
-                    .background(Color.White.copy(alpha = 0.05f))
-                    .border(1.dp, Color(0xFF2A2A2D), CircleShape),
+                    .background(if (isDark) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.05f))
+                    .border(1.dp, if (isDark) Color(0xFF2A2A2D) else Color(0xFFE5E5EA), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 val avatar = profile?.avatarUri
@@ -144,12 +148,12 @@ fun ProfileScreen(
             Text(
                 text = profile?.name?.ifBlank { "Unconfigured Profile" } ?: "Your Name",
                 style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-                color = Color.White
+                color = MaterialTheme.colorScheme.onBackground
             )
             Text(
                 text = profile?.title?.ifBlank { "Configure in settings wizard" } ?: "Developer Title",
                 style = MaterialTheme.typography.titleMedium,
-                color = Color(0xFF8E8E93),
+                color = subTextColor,
                 fontWeight = FontWeight.SemiBold
             )
 
@@ -158,13 +162,13 @@ fun ProfileScreen(
                 Text(
                     text = "Bio",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = Color.White
+                    color = textColor
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = profile?.bio?.ifBlank { "No bio provided." } ?: "No bio provided.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White.copy(alpha = 0.75f)
+                    color = subTextColor
                 )
             }
 
@@ -184,14 +188,14 @@ fun ProfileScreen(
                         Text(
                             text = "EXPERIENCE",
                             style = MaterialTheme.typography.labelSmall,
-                            color = Color(0xFF8E8E93),
+                            color = subTextColor,
                             fontWeight = FontWeight.SemiBold
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = "${profile?.experienceYears ?: 0} YRS",
                             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                            color = Color.White
+                            color = textColor
                         )
                     }
                 }
@@ -207,14 +211,14 @@ fun ProfileScreen(
                         Text(
                             text = "PROJECTS",
                             style = MaterialTheme.typography.labelSmall,
-                            color = Color(0xFF8E8E93),
+                            color = subTextColor,
                             fontWeight = FontWeight.SemiBold
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = projects.size.toString(),
                             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                            color = Color.White
+                            color = textColor
                         )
                     }
                 }
@@ -235,11 +239,14 @@ fun ProfileScreen(
                             } catch (e: Exception) {}
                         },
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E1E20)),
-                        border = BorderStroke(1.dp, Color(0xFF2A2A2D)),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isDark) Color(0xFF1E1E20) else Color(0xFFE5E5EA),
+                            contentColor = textColor
+                        ),
+                        border = BorderStroke(1.dp, if (isDark) Color(0xFF2A2A2D) else Color(0xFFD1D1D6)),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text("Email", color = Color.White, style = MaterialTheme.typography.bodySmall)
+                        Text("Email", color = textColor, style = MaterialTheme.typography.bodySmall)
                     }
                 }
                 if (profile?.githubUrl?.isNotBlank() == true) {
@@ -254,11 +261,14 @@ fun ProfileScreen(
                             } catch (e: Exception) {}
                         },
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E1E20)),
-                        border = BorderStroke(1.dp, Color(0xFF2A2A2D)),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isDark) Color(0xFF1E1E20) else Color(0xFFE5E5EA),
+                            contentColor = textColor
+                        ),
+                        border = BorderStroke(1.dp, if (isDark) Color(0xFF2A2A2D) else Color(0xFFD1D1D6)),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text("GitHub", color = Color.White, style = MaterialTheme.typography.bodySmall)
+                        Text("GitHub", color = textColor, style = MaterialTheme.typography.bodySmall)
                     }
                 }
                 if (profile?.linkedinUrl?.isNotBlank() == true) {
@@ -273,11 +283,14 @@ fun ProfileScreen(
                             } catch (e: Exception) {}
                         },
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E1E20)),
-                        border = BorderStroke(1.dp, Color(0xFF2A2A2D)),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isDark) Color(0xFF1E1E20) else Color(0xFFE5E5EA),
+                            contentColor = textColor
+                        ),
+                        border = BorderStroke(1.dp, if (isDark) Color(0xFF2A2A2D) else Color(0xFFD1D1D6)),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text("LinkedIn", color = Color.White, style = MaterialTheme.typography.bodySmall)
+                        Text("LinkedIn", color = textColor, style = MaterialTheme.typography.bodySmall)
                     }
                 }
             }
@@ -294,8 +307,11 @@ fun ProfileScreen(
                     modifier = Modifier
                         .weight(1f)
                         .height(50.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E1E20)),
-                    border = BorderStroke(1.dp, Color(0xFF2A2A2D)),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isDark) Color(0xFF1E1E20) else Color(0xFF1C1C1E),
+                        contentColor = Color.White
+                    ),
+                    border = if (isDark) BorderStroke(1.dp, Color(0xFF2A2A2D)) else null,
                     shape = RoundedCornerShape(10.dp)
                 ) {
                     Icon(Icons.Default.QrCode, contentDescription = null, tint = Color.White)
@@ -308,12 +324,24 @@ fun ProfileScreen(
                     modifier = Modifier
                         .weight(1.2f)
                         .height(50.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.White, contentColor = Color.Black),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isDark) Color.White else Color(0xFFFFFFFF),
+                        contentColor = if (isDark) Color.Black else Color(0xFF1C1C1E)
+                    ),
+                    border = if (isDark) null else BorderStroke(1.dp, Color(0xFFE5E5EA)),
                     shape = RoundedCornerShape(10.dp)
                 ) {
-                    Icon(Icons.Default.CloudDownload, contentDescription = null, tint = Color.Black)
+                    Icon(
+                        imageVector = Icons.Default.CloudDownload, 
+                        contentDescription = null, 
+                        tint = if (isDark) Color.Black else Color(0xFF1C1C1E)
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Export Portfolio", color = Color.Black, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = "Export Portfolio", 
+                        color = if (isDark) Color.Black else Color(0xFF1C1C1E), 
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         }
