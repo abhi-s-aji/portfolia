@@ -121,12 +121,12 @@ fun ReferencesScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showAddDialog = true },
-                containerColor = accent.primary,
-                contentColor = Color.White,
+                containerColor = Color.White,
+                contentColor = Color.Black,
                 shape = CircleShape,
                 modifier = Modifier.padding(bottom = 8.dp)
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Add Link")
+                Icon(Icons.Default.Add, contentDescription = "Add Link", tint = Color.Black)
             }
         }
     ) { padding ->
@@ -147,8 +147,8 @@ fun ReferencesScreen(
                 ) {
                     tabs.forEach { tab ->
                         val isSelected = selectedTab == tab
-                        val bg by animateColorAsState(targetValue = if (isSelected) accent.primary else Color.White.copy(alpha = 0.05f))
-                        val textCol by animateColorAsState(targetValue = if (isSelected) Color.White else Color.White.copy(alpha = 0.6f))
+                        val bg by animateColorAsState(targetValue = if (isSelected) Color(0xFF2C2C2E) else Color(0xFF1E1E20))
+                        val textCol by animateColorAsState(targetValue = if (isSelected) Color.White else Color(0xFF8E8E93))
 
                         Box(
                             modifier = Modifier
@@ -206,32 +206,16 @@ fun ReferencesScreen(
                                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
                                     color = Color.White
                                 )
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                Surface(
+                                    shape = CircleShape,
+                                    color = Color.White.copy(alpha = 0.08f)
                                 ) {
-                                    Surface(
-                                        shape = CircleShape,
-                                        color = Color.White.copy(alpha = 0.08f)
-                                    ) {
-                                        Text(
-                                            text = ref.category,
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = Color.White.copy(alpha = 0.6f),
-                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
-                                        )
-                                    }
-                                    Surface(
-                                        shape = CircleShape,
-                                        color = accent.primary.copy(alpha = 0.15f)
-                                    ) {
-                                        Text(
-                                            text = ref.groupName,
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = accent.primary,
-                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    }
+                                    Text(
+                                        text = ref.category,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = Color.White.copy(alpha = 0.6f),
+                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                                    )
                                 }
                             }
                             if (ref.notes.isNotBlank()) {
