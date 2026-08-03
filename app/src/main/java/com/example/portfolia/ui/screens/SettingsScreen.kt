@@ -224,13 +224,15 @@ fun SettingsScreen(
             AppleGlassCard(modifier = Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text(
-                        text = "App developed by Abhi S Aji",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Monospace
+                        text = "App Developer Contact",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                        color = Color.White
                     )
-                    Text("Connect, report bugs, or view source code directly:", style = MaterialTheme.typography.bodySmall, color = Color(0xFF989A9C))
+                    Text(
+                        text = "Get in touch, report issues, or view social profiles.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xFF8E8E93)
+                    )
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -250,8 +252,8 @@ fun SettingsScreen(
                                     } catch (e: Exception) {}
                                 },
                                 modifier = Modifier.weight(1f),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.05f)),
-                                border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f)),
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF252528)),
+                                border = BorderStroke(1.dp, Color(0xFF2A2A2D)),
                                 shape = RoundedCornerShape(8.dp),
                                 contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp)
                             ) {
