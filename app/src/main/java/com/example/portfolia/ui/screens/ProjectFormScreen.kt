@@ -1,15 +1,33 @@
 package com.example.portfolia.ui.screens
 
 import android.app.Application
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,25 +38,36 @@ import com.example.portfolia.ui.theme.ThemeAccent
 import kotlinx.coroutines.launch
 
 class FormViewModel(application: Application) : AndroidViewModel(application) {
-    private val dao = (application as PortfoliaApp).database.projectDao()
+    private val db = (application as PortfoliaApp).database
 
-    fun saveProject(title: String, desc: String, category: String, tech: String, github: String, onSaved: () -> Unit) {
+    fun saveProject(
+        title: String,
+        desc: String,
+        category: String,
+        tech: List<String>,
+        github: String,
+        demo: String,
+        linkedin: String,
+        onSaved: () -> Unit
+    ) {
+        val proj = ProjectEntity(
+            title = title,
+            description = desc,
+            category = category,
+            techStack = tech,
+            githubUrl = github,
+            demoUrl = demo,
+            linkedinPostUrl = linkedin,
+            timestamp = System.currentTimeMillis()
+        )
         viewModelScope.launch {
-            dao.insertProject(
-                ProjectEntity(
-                    title = title,
-                    description = desc,
-                    category = if (category.isBlank()) "General" else category,
-                    techStack = tech,
-                    githubUrl = github
-                )
-            )
+            db.projectDao().insertProject(proj)
             onSaved()
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectFormScreen(
     accent: ThemeAccent,
@@ -46,17 +75,34 @@ fun ProjectFormScreen(
     onProjectSaved: () -> Unit,
     viewModel: FormViewModel = viewModel()
 ) {
+    val scrollState = rememberScrollState()
+    val view = LocalView.current
+
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
-    var techStack by remember { mutableStateOf("") }
+    var techInput by remember { mutableStateOf("") }
+    val techList = remember { mutableStateListOf<String>() }
     var githubUrl by remember { mutableStateOf("") }
+    var demoUrl by remember { mutableStateOf("") }
+    var linkedinPostUrl by remember { mutableStateOf("") }
+
+    val inputColors = OutlinedTextFieldDefaults.colors(
+        focusedContainerColor = Color(0xFF1E1E20),
+        unfocusedContainerColor = Color(0xFF1E1E20),
+        focusedTextColor = Color.White,
+        unfocusedTextColor = Color.White,
+        focusedLabelColor = Color.White,
+        unfocusedLabelColor = Color(0xFF8E8E93),
+        focusedBorderColor = Color.White,
+        unfocusedBorderColor = Color(0xFF2A2A2D)
+    )
 
     Scaffold(
-        containerColor = Color.Transparent,
+        containerColor = Color(0xFF141415), // Deep Charcoal Black Canvas
         topBar = {
             TopAppBar(
-                title = { Text("New Project", color = Color.White, fontWeight = FontWeight.Bold) },
+                title = { Text("Add Project", color = Color.White, fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
@@ -74,6 +120,7 @@ fun ProjectFormScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .verticalScroll(scrollState)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
@@ -82,14 +129,8 @@ fun ProjectFormScreen(
                 onValueChange = { title = it },
                 label = { Text("Project Title") },
                 modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedBorderColor = accent.primary,
-                    unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                    focusedLabelColor = accent.primary,
-                    unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
-                )
+                colors = inputColors,
+                singleLine = true
             )
             OutlinedTextField(
                 value = description,
@@ -97,71 +138,170 @@ fun ProjectFormScreen(
                 label = { Text("Description") },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 2,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedBorderColor = accent.primary,
-                    unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                    focusedLabelColor = accent.primary,
-                    unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
-                )
+                colors = inputColors
             )
             OutlinedTextField(
                 value = category,
                 onValueChange = { category = it },
-                label = { Text("Category (e.g. Android, Web)") },
+                label = { Text("Category (e.g. Android, Web, Systems)") },
                 modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedBorderColor = accent.primary,
-                    unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                    focusedLabelColor = accent.primary,
-                    unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
-                )
+                colors = inputColors,
+                singleLine = true
             )
-            OutlinedTextField(
-                value = techStack,
-                onValueChange = { techStack = it },
-                label = { Text("Tech Stack (e.g. Kotlin, Compose)") },
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedBorderColor = accent.primary,
-                    unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                    focusedLabelColor = accent.primary,
-                    unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
+
+            // Dynamic Tag-Based Tech Stack Input
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(
+                    value = techInput,
+                    onValueChange = { input ->
+                        if (input.endsWith(",") || input.endsWith("\n")) {
+                            val tag = input.dropLast(1).trim()
+                            if (tag.isNotEmpty() && !techList.contains(tag)) {
+                                techList.add(tag)
+                                view.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
+                            }
+                            techInput = ""
+                        } else {
+                            techInput = input
+                        }
+                    },
+                    label = { Text("Add Tech Tag (Comma or Enter)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = {
+                        val tag = techInput.trim()
+                        if (tag.isNotEmpty() && !techList.contains(tag)) {
+                            techList.add(tag)
+                            view.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
+                        }
+                        techInput = ""
+                    }),
+                    colors = inputColors,
+                    singleLine = true
                 )
-            )
+
+                // Chips container
+                if (techList.isNotEmpty()) {
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        techList.forEach { tag ->
+                            AnimatedTagChip(
+                                tag = tag,
+                                onRemove = {
+                                    techList.remove(tag)
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
             OutlinedTextField(
                 value = githubUrl,
                 onValueChange = { githubUrl = it },
                 label = { Text("GitHub Repository Link") },
                 modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedBorderColor = accent.primary,
-                    unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                    focusedLabelColor = accent.primary,
-                    unfocusedLabelColor = Color.White.copy(alpha = 0.5f)
-                )
+                colors = inputColors,
+                singleLine = true
             )
-            Spacer(modifier = Modifier.weight(1f))
+
+            OutlinedTextField(
+                value = demoUrl,
+                onValueChange = { demoUrl = it },
+                label = { Text("Live Demo Link") },
+                modifier = Modifier.fillMaxWidth(),
+                colors = inputColors,
+                singleLine = true
+            )
+
+            OutlinedTextField(
+                value = linkedinPostUrl,
+                onValueChange = { linkedinPostUrl = it },
+                label = { Text("LinkedIn Showcase Post Link") },
+                modifier = Modifier.fillMaxWidth(),
+                colors = inputColors,
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Stark CTA style: White background, Black text
             Button(
                 onClick = {
                     if (title.isNotBlank()) {
-                        viewModel.saveProject(title, description, category, techStack, githubUrl, onProjectSaved)
+                        viewModel.saveProject(
+                            title = title,
+                            desc = description,
+                            category = category,
+                            tech = techList.toList(),
+                            github = githubUrl,
+                            demo = demoUrl,
+                            linkedin = linkedinPostUrl,
+                            onSaved = onProjectSaved
+                        )
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = accent.primary)
+                colors = ButtonDefaults.buttonColors(containerColor = Color.White, contentColor = Color.Black),
+                enabled = title.isNotBlank()
             ) {
                 Icon(Icons.Default.Save, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Save Project")
+                Text("Save Project", fontWeight = FontWeight.Bold)
             }
+        }
+    }
+}
+
+@Composable
+fun AnimatedTagChip(
+    tag: String,
+    onRemove: () -> Unit
+) {
+    val view = LocalView.current
+    var isVisible by remember { mutableStateOf(true) }
+
+    val scale by animateFloatAsState(
+        targetValue = if (isVisible) 1f else 0f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessMedium),
+        finishedListener = { if (!isVisible) onRemove() }
+    )
+    val alpha by animateFloatAsState(
+        targetValue = if (isVisible) 1f else 0f,
+        animationSpec = tween(150)
+    )
+
+    Box(
+        modifier = Modifier
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+                this.alpha = alpha
+            }
+            .clip(RoundedCornerShape(8.dp))
+            .background(Color.White.copy(alpha = 0.08f))
+            .border(1.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(8.dp))
+            .clickable {
+                view.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
+                isVisible = false
+            }
+            .padding(horizontal = 10.dp, vertical = 6.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(text = tag, color = Color.White, style = MaterialTheme.typography.bodySmall)
+            Spacer(modifier = Modifier.width(6.dp))
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Remove Tag",
+                tint = Color.White.copy(alpha = 0.5f),
+                modifier = Modifier.size(12.dp)
+            )
         }
     }
 }

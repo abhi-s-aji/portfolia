@@ -4,52 +4,68 @@ import androidx.compose.ui.graphics.Color
 
 enum class ThemeAccent(
     val displayName: String,
+    val background: Color,
+    val surface: Color,
     val primary: Color,
-    val mesh1: Color,
-    val mesh2: Color,
-    val mesh3: Color
+    val textPrimary: Color,
+    val textMuted: Color
 ) {
-    SAPPHIRE(
-        displayName = "Sapphire",
-        primary = Color(0xFF0984E3),
-        mesh1 = Color(0xFF0984E3).copy(alpha = 0.38f),
-        mesh2 = Color(0xFF6C5CE7).copy(alpha = 0.32f),
-        mesh3 = Color(0xFF00CEC9).copy(alpha = 0.25f)
+    OBSIDIAN_DARK(
+        displayName = "Obsidian Dark",
+        background = Color(0xFF141415),
+        surface = Color(0xFF1E1E20),
+        primary = Color(0xFFFFFFFF),
+        textPrimary = Color(0xFFFFFFFF),
+        textMuted = Color(0xFF8E8E93)
     ),
-    ROSE_GOLD(
-        displayName = "Rose Gold",
-        primary = Color(0xFFFF6B6B),
-        mesh1 = Color(0xFFFF6B6B).copy(alpha = 0.38f),
-        mesh2 = Color(0xFFFECA57).copy(alpha = 0.30f),
-        mesh3 = Color(0xFFFD79A8).copy(alpha = 0.25f)
+    SLATE_STEEL(
+        displayName = "Slate Steel",
+        background = Color(0xFF08090C),
+        surface = Color(0xFF101216),
+        primary = Color(0xFF94A3B8),
+        textPrimary = Color(0xFFF8FAFC),
+        textMuted = Color(0xFF64748B)
     ),
-    FOREST(
-        displayName = "Forest",
-        primary = Color(0xFF00B894),
-        mesh1 = Color(0xFF00B894).copy(alpha = 0.35f),
-        mesh2 = Color(0xFF00CEC9).copy(alpha = 0.30f),
-        mesh3 = Color(0xFF0984E3).copy(alpha = 0.25f)
+    ROYAL_SAPPHIRE(
+        displayName = "Royal Sapphire",
+        background = Color(0xFF05070A),
+        surface = Color(0xFF11161D),
+        primary = Color(0xFF3D7EFF),
+        textPrimary = Color(0xFFF7FAFF),
+        textMuted = Color(0xFF9BBEFF)
     ),
-    AMETHYST(
-        displayName = "Amethyst",
-        primary = Color(0xFFA29BFE),
-        mesh1 = Color(0xFFA29BFE).copy(alpha = 0.38f),
-        mesh2 = Color(0xFF6C5CE7).copy(alpha = 0.35f),
-        mesh3 = Color(0xFFFD79A8).copy(alpha = 0.25f)
+    EMERALD_PRO(
+        displayName = "Emerald Pro",
+        background = Color(0xFF050505),
+        surface = Color(0xFF101317),
+        primary = Color(0xFF00C853),
+        textPrimary = Color(0xFFF5FFF7),
+        textMuted = Color(0xFF69F0AE)
     ),
-    SUNSET(
-        displayName = "Sunset",
-        primary = Color(0xFFFD79A8),
-        mesh1 = Color(0xFFFD79A8).copy(alpha = 0.38f),
-        mesh2 = Color(0xFFFDCB6E).copy(alpha = 0.32f),
-        mesh3 = Color(0xFFFF6B6B).copy(alpha = 0.28f)
+    TITANIUM_GOLD(
+        displayName = "Titanium Gold",
+        background = Color(0xFF000000),
+        surface = Color(0xFF111111),
+        primary = Color(0xFFD4AF37),
+        textPrimary = Color(0xFFF8F8F8),
+        textMuted = Color(0xFFA78B4A)
+    ),
+    WARM_CORAL(
+        displayName = "Warm Coral",
+        background = Color(0xFF0D0E12),
+        surface = Color(0xFF15171C),
+        primary = Color(0xFFF26D5B),
+        textPrimary = Color(0xFFFAFAFA),
+        textMuted = Color(0xFFFFB4A2)
+    ),
+    MINIMAL_STARK(
+        displayName = "Minimal Stark",
+        background = Color(0xFFFFFFFF),
+        surface = Color(0xFFF5F5F5),
+        primary = Color(0xFF000000),
+        textPrimary = Color(0xFF111111),
+        textMuted = Color(0xFF6B7280)
     )
-}
-
-enum class GlassIntensity(val displayName: String, val alpha: Float, val blurDp: Int) {
-    SUBTLE("Subtle", 0.05f, 40),
-    MEDIUM("Medium", 0.10f, 75),
-    BOLD("Bold", 0.18f, 110)
 }
 
 enum class LayoutDensity(val displayName: String, val paddingDp: Int) {

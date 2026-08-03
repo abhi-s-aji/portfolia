@@ -6,13 +6,14 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "user_profile")
 data class UserProfileEntity(
     @PrimaryKey val id: Int = 1, // Single profile row
-    val name: String = "Your Name",
-    val title: String = "Software Developer",
-    val bio: String = "Passionate developer crafting high quality applications.",
-    val email: String = "developer@example.com",
-    val githubUrl: String = "https://github.com",
-    val linkedinUrl: String = "https://linkedin.com",
-    val experience: String = "8+ YRS",
+    val name: String = "",
+    val title: String = "",
+    val bio: String = "",
+    val email: String = "",
+    val githubUrl: String = "",
+    val linkedinUrl: String = "",
+    val experienceYears: Int = 0,
     val uptime: String = "99.9%",
-    val commits: String = "12.4k"
+    val commits: String = "12.4k",
+    val avatarUri: String? = null
 )

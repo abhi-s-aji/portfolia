@@ -1,44 +1,141 @@
 package com.example.portfolia.ui.screens
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.portfolia.PortfoliaApp
+import com.example.portfolia.data.ProjectEntity
+import com.example.portfolia.data.ReferenceEntity
+import com.example.portfolia.data.SettingsDataStore
+import com.example.portfolia.data.UserProfileEntity
 import com.example.portfolia.ui.components.AppleGlassCard
-import com.example.portfolia.ui.theme.GlassIntensity
-import com.example.portfolia.ui.theme.LayoutDensity
-import com.example.portfolia.ui.theme.ThemeAccent
+import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    isGlassmorphism: Boolean,
-    accent: ThemeAccent,
-    intensity: GlassIntensity,
-    density: LayoutDensity,
-    onGlassmorphismToggle: (Boolean) -> Unit,
-    onAccentSelected: (ThemeAccent) -> Unit,
-    onIntensitySelected: (GlassIntensity) -> Unit,
-    onDensitySelected: (LayoutDensity) -> Unit
+    settingsDataStore: SettingsDataStore,
+    onEditProfileClick: () -> Unit
 ) {
+    val context = LocalContext.current
+    val view = LocalView.current
+    val scope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
+
+    var showResetDialog by remember { mutableStateOf(false) }
+
+    // JSON export launcher
+    val jsonExportLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        if (uri != null) {
+            scope.launch(Dispatchers.IO) {
+                try {
+                    val db = (context.applicationContext as PortfoliaApp).database
+                    val profile = db.profileDao().getUserProfile().first()
+                    val projects = db.projectDao().getAllProjects().first()
+                    val references = db.referenceDao().getAllReferences().first()
+
+                    val backupMap = mapOf(
+                        "profile" to profile,
+                        "projects" to projects,
+                        "references" to references
+                    )
+                    val jsonStr = Gson().toJson(backupMap)
+
+                    context.contentResolver.openOutputStream(uri)?.use { os ->
+                        os.write(jsonStr.toByteArray())
+                    }
+                    scope.launch(Dispatchers.Main) {
+                        android.widget.Toast.makeText(context, "Backup JSON exported successfully!", android.widget.Toast.LENGTH_LONG).show()
+                    }
+                } catch (e: Exception) {
+                    scope.launch(Dispatchers.Main) {
+                        android.widget.Toast.makeText(context, "Export failed: ${e.message}", android.widget.Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+    }
+
+    // JSON import launcher
+    val jsonImportLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            scope.launch(Dispatchers.IO) {
+                try {
+                    val jsonStr = context.contentResolver.openInputStream(uri)?.use { isStream ->
+                        isStream.bufferedReader().readText()
+                    }
+                    if (jsonStr != null) {
+                        val parser = com.google.gson.JsonParser.parseString(jsonStr).asJsonObject
+                        
+                        // Parse values
+                        val profileObj = parser.getAsJsonObject("profile")
+                        val profileEntity = if (profileObj != null) {
+                            Gson().fromJson(profileObj, UserProfileEntity::class.java)
+                        } else null
+
+                        val projectsArr = parser.getAsJsonArray("projects")
+                        val projectsList = if (projectsArr != null) {
+                            val type = object : com.google.gson.reflect.TypeToken<List<ProjectEntity>>() {}.type
+                            Gson().fromJson<List<ProjectEntity>>(projectsArr, type)
+                        } else emptyList()
+
+                        val referencesArr = parser.getAsJsonArray("references")
+                        val referencesList = if (referencesArr != null) {
+                            val type = object : com.google.gson.reflect.TypeToken<List<ReferenceEntity>>() {}.type
+                            Gson().fromJson<List<ReferenceEntity>>(referencesArr, type)
+                        } else emptyList()
+
+                        val db = (context.applicationContext as PortfoliaApp).database
+                        db.clearAllTables()
+                        if (profileEntity != null) {
+                            db.profileDao().saveUserProfile(profileEntity)
+                        }
+                        projectsList.forEach { db.projectDao().insertProject(it.copy(id = 0)) }
+                        referencesList.forEach { db.referenceDao().insertReference(it.copy(id = 0)) }
+                        settingsDataStore.setOnboardingCompleted(true)
+
+                        scope.launch(Dispatchers.Main) {
+                            android.widget.Toast.makeText(context, "Backup JSON imported successfully!", android.widget.Toast.LENGTH_LONG).show()
+                        }
+                    }
+                } catch (e: Exception) {
+                    scope.launch(Dispatchers.Main) {
+                        android.widget.Toast.makeText(context, "Import failed: ${e.message}", android.widget.Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+    }
+
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
-                title = { Text("Customization", color = Color.White, fontWeight = FontWeight.Bold) },
+                title = { Text("Settings", color = Color.White, fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
             )
         }
@@ -47,153 +144,162 @@ fun SettingsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(scrollState)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            // GLASSMORPHISM TOGGLE
-            AppleGlassCard(isGlassmorphism = isGlassmorphism, intensity = intensity) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text("Translucent Surfaces", style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.SemiBold)
-                        Text("Enable frosted specular surfaces with ambient illumination.", style = MaterialTheme.typography.bodySmall, color = Color(0xFF989A9C))
+            // 1. PROFILE MANAGEMENT CARD
+            AppleGlassCard(modifier = Modifier.fillMaxWidth()) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("Profile Configuration", style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.SemiBold)
+                    Text("Modify credentials, bio contacts, or profile avatar.", style = MaterialTheme.typography.bodySmall, color = Color(0xFF989A9C))
+                    
+                    Button(
+                        onClick = onEditProfileClick,
+                        modifier = Modifier.fillMaxWidth().height(48.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.White, contentColor = Color.Black),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Icon(Icons.Default.Edit, contentDescription = null, tint = Color.Black, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Edit Profile Details", color = Color.Black, fontWeight = FontWeight.Bold)
                     }
-                    Switch(
-                        checked = isGlassmorphism,
-                        onCheckedChange = onGlassmorphismToggle,
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = accent.primary,
-                            uncheckedTrackColor = Color(0xFF2B2E3A)
-                        )
-                    )
                 }
             }
 
-            // ACCENT PALETTE SELECTOR
-            AppleGlassCard(isGlassmorphism = isGlassmorphism, intensity = intensity) {
+            // 2. DATA & STORAGE MANAGEMENT CARD
+            AppleGlassCard(modifier = Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text("Accent Theme", style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.SemiBold)
+                    Text("Data & Storage", style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.SemiBold)
+                    Text("Export or restore your profile configurations, links, and projects list.", style = MaterialTheme.typography.bodySmall, color = Color(0xFF989A9C))
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        ThemeAccent.values().forEach { item ->
-                            val isSelected = accent == item
-                            val borderColor by animateColorAsState(
-                                targetValue = if (isSelected) Color.White else Color.Transparent,
-                                label = "border_anim"
-                            )
-
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .clickable { onAccentSelected(item) }
-                                    .padding(6.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(38.dp)
-                                        .clip(CircleShape)
-                                        .background(item.primary)
-                                        .border(2.dp, borderColor, CircleShape)
-                                )
-                                Spacer(modifier = Modifier.height(6.dp))
-                                Text(
-                                    text = item.displayName.split(" ")[0],
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = if (isSelected) Color.White else Color(0xFF8E9094)
-                                )
-                            }
+                        Button(
+                            onClick = {
+                                jsonExportLauncher.launch("portfolia_backup.json")
+                            },
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.08f)),
+                            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f)),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Icon(Icons.Default.Upload, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color.White)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("Export Backup", color = Color.White, style = MaterialTheme.typography.labelSmall)
                         }
+
+                        Button(
+                            onClick = {
+                                jsonImportLauncher.launch(arrayOf("application/json"))
+                            },
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.08f)),
+                            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f)),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Icon(Icons.Default.Download, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color.White)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("Import Backup", color = Color.White, style = MaterialTheme.typography.labelSmall)
+                        }
+                    }
+
+                    Button(
+                        onClick = { showResetDialog = true },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0x20FF453A)),
+                        border = BorderStroke(1.dp, Color(0xFFFF453A).copy(alpha = 0.3f)),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Icon(Icons.Default.DeleteSweep, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color(0xFFFF453A))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Reset App Data", color = Color(0xFFFF453A), fontWeight = FontWeight.Bold)
                     }
                 }
             }
 
-            // INTENSITY SEGMENT CONTROL
-            AppleGlassCard(isGlassmorphism = isGlassmorphism, intensity = intensity) {
+            // 3. DEVELOPER CREDITS CARD
+            AppleGlassCard(modifier = Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Text("Glass Intensity", style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.SemiBold)
+                    Text(
+                        text = "App developed by Abhi S Aji",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.Monospace
+                    )
+                    Text("Connect, report bugs, or view source code directly:", style = MaterialTheme.typography.bodySmall, color = Color(0xFF989A9C))
+
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(Color(0xFF0F1015))
-                            .padding(4.dp),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        GlassIntensity.values().forEach { level ->
-                            val isSelected = intensity == level
-                            val bg by animateColorAsState(
-                                targetValue = if (isSelected) accent.primary else Color.Transparent,
-                                label = "intensity_bg"
-                            )
-
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(36.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(bg)
-                                    .clickable { onIntensitySelected(level) }
+                        val actions = listOf(
+                            "GitHub" to "https://github.com/abhi-s-aji",
+                            "LinkedIn" to "https://www.linkedin.com/in/abhi-s-aji-eden",
+                            "Email" to "mailto:abhisaji.dev@gmail.com"
+                        )
+                        actions.forEach { (label, link) ->
+                            Button(
+                                onClick = {
+                                    try {
+                                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
+                                        context.startActivity(intent)
+                                    } catch (e: Exception) {}
+                                },
+                                modifier = Modifier.weight(1f),
+                                colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.05f)),
+                                border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f)),
+                                shape = RoundedCornerShape(8.dp),
+                                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 6.dp)
                             ) {
-                                Text(
-                                    text = level.displayName,
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = if (isSelected) Color.White else Color(0xFF8E9094),
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-
-            // DENSITY SEGMENT CONTROL
-            AppleGlassCard(isGlassmorphism = isGlassmorphism, intensity = intensity) {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Text("Layout Density", style = MaterialTheme.typography.titleMedium, color = Color.White, fontWeight = FontWeight.SemiBold)
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(Color(0xFF0F1015))
-                            .padding(4.dp),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        LayoutDensity.values().forEach { dens ->
-                            val isSelected = density == dens
-                            val bg by animateColorAsState(
-                                targetValue = if (isSelected) accent.primary else Color.Transparent,
-                                label = "density_bg"
-                            )
-
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(36.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(bg)
-                                    .clickable { onDensitySelected(dens) }
-                            ) {
-                                Text(
-                                    text = dens.displayName,
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = if (isSelected) Color.White else Color(0xFF8E9094),
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                                )
+                                Text(label, color = Color.White, style = MaterialTheme.typography.labelSmall)
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    // Reset confirmation Dialog
+    if (showResetDialog) {
+        AlertDialog(
+            onDismissRequest = { showResetDialog = false },
+            containerColor = Color(0xFF1E1E20),
+            tonalElevation = 0.dp,
+            title = { Text("Reset Application Data?", color = Color.White, fontWeight = FontWeight.Bold) },
+            text = {
+                Text(
+                    text = "This will permanently delete all your profiles, projects, reference links, and reset app customization preferences. This action cannot be undone.",
+                    color = Color.White.copy(alpha = 0.7f)
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        scope.launch(Dispatchers.IO) {
+                            val db = (context.applicationContext as PortfoliaApp).database
+                            db.clearAllTables()
+                            settingsDataStore.clearAll()
+                            scope.launch(Dispatchers.Main) {
+                                showResetDialog = false
+                                android.widget.Toast.makeText(context, "Application successfully reset!", android.widget.Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF453A))
+                ) {
+                    Text("Yes, Reset Data", color = Color.White)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showResetDialog = false }) {
+                    Text("Cancel", color = Color.White.copy(alpha = 0.7f))
+                }
+            }
+        )
     }
 }

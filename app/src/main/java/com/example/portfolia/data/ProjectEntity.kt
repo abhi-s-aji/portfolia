@@ -9,9 +9,9 @@ data class ProjectEntity(
     val title: String,
     val description: String,
     val category: String,
-    val techStack: String,
-    val githubUrl: String = "",
     val demoUrl: String = "",
-    val isFeatured: Boolean = false,
-    val createdAt: Long = System.currentTimeMillis()
+    val githubUrl: String = "",
+    val linkedinPostUrl: String = "",
+    val techStack: List<String>,
+    val timestamp: Long = System.currentTimeMillis()
 )

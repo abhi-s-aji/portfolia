@@ -66,4 +66,5 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("androidx.browser:browser:1.8.0")
+    implementation("com.google.zxing:core:3.5.3")
 }

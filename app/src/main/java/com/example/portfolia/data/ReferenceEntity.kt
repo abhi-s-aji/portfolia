@@ -9,6 +9,7 @@ data class ReferenceEntity(
     val title: String,
     val url: String,
     val category: String = "General", // e.g., Docs, GitHub, Design, Tools
+    val groupName: String = "General",
     val notes: String = "",
     val createdAt: Long = System.currentTimeMillis()
 )
