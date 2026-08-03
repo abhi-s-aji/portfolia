@@ -39,6 +39,7 @@ import com.example.portfolia.PortfoliaApp
 import com.example.portfolia.data.ProjectEntity
 import com.example.portfolia.data.UserProfileEntity
 import com.example.portfolia.ui.components.AppleGlassCard
+import com.example.portfolia.ui.components.PresetAvatarImage
 import com.example.portfolia.ui.theme.ThemeAccent
 import com.example.portfolia.util.AiPromptExporter
 import kotlinx.coroutines.flow.SharingStarted
@@ -131,8 +132,7 @@ fun ProfileScreen(
             ) {
                 val avatar = profile?.avatarUri
                 if (avatar != null && avatar.startsWith("preset:")) {
-                    val emoji = avatar.removePrefix("preset:")
-                    Text(text = emoji, style = MaterialTheme.typography.displaySmall)
+                    PresetAvatarImage(presetId = avatar, modifier = Modifier.fillMaxSize(), iconSize = 40.dp)
                 } else if (avatar != null) {
                     AsyncImage(
                         model = avatar,

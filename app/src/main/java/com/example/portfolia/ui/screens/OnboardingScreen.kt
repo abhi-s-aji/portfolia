@@ -7,6 +7,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,6 +20,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.*
@@ -27,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
@@ -42,6 +45,7 @@ import com.example.portfolia.PortfoliaApp
 import com.example.portfolia.data.SettingsDataStore
 import com.example.portfolia.data.UserProfileEntity
 import com.example.portfolia.ui.theme.ThemeAccent
+import com.example.portfolia.ui.components.PresetAvatarImage
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -120,7 +124,7 @@ fun OnboardingScreen(
         }
     }
 
-    val presets = listOf("preset:💻", "preset:🚀", "preset:🎨", "preset:🛠️", "preset:⚙️")
+    val presets = listOf("preset:architect", "preset:security", "preset:creator", "preset:mobile", "preset:systems")
 
     val isDark = MaterialTheme.colorScheme.background == Color(0xFF141415)
     val textColor = MaterialTheme.colorScheme.onSurface
@@ -205,8 +209,7 @@ fun OnboardingScreen(
                     ) {
                         val avatar = viewModel.selectedAvatar
                         if (avatar != null && avatar.startsWith("preset:")) {
-                            val emoji = avatar.removePrefix("preset:")
-                            Text(text = emoji, style = MaterialTheme.typography.headlineLarge)
+                            PresetAvatarImage(presetId = avatar, modifier = Modifier.fillMaxSize())
                         } else if (avatar != null) {
                             AsyncImage(
                                 model = avatar,
@@ -221,31 +224,33 @@ fun OnboardingScreen(
 
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             presets.forEach { preset ->
                                 val isSelected = viewModel.selectedAvatar == preset
+                                val ringColor = if (isDark) Color.White else Color(0xFF1C1C1E)
+                                val scale by animateFloatAsState(
+                                    targetValue = if (isSelected) 1.1f else 1.0f,
+                                    label = "PresetScaleAnimation"
+                                )
+
                                 Box(
                                     modifier = Modifier
-                                        .size(30.dp)
+                                        .size(48.dp)
+                                        .graphicsLayer {
+                                            scaleX = scale
+                                            scaleY = scale
+                                        }
                                         .clip(CircleShape)
-                                        .background(
-                                            if (isSelected) {
-                                                if (isDark) Color.White.copy(alpha = 0.2f) else Color.Black.copy(alpha = 0.15f)
-                                            } else {
-                                                if (isDark) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.05f)
-                                            }
-                                        )
                                         .border(
-                                            width = 1.dp,
-                                            color = if (isSelected) textColor else Color.Transparent,
+                                            width = 1.5.dp,
+                                            color = if (isSelected) ringColor else if (isDark) Color(0xFF2A2A2D) else Color(0xFFE5E5EA),
                                             shape = CircleShape
                                         )
-                                        .clickable { viewModel.selectedAvatar = preset },
-                                    contentAlignment = Alignment.Center
+                                        .clickable { viewModel.selectedAvatar = preset }
                                 ) {
-                                    Text(text = preset.removePrefix("preset:"), style = MaterialTheme.typography.bodySmall, color = textColor)
+                                    PresetAvatarImage(presetId = preset, modifier = Modifier.fillMaxSize(), iconSize = 20.dp)
                                 }
                             }
                         }
@@ -261,12 +266,12 @@ fun OnboardingScreen(
                                 contentColor = textColor
                             ),
                             border = BorderStroke(1.dp, if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.1f)),
-                            shape = RoundedCornerShape(6.dp),
-                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
-                            modifier = Modifier.height(28.dp)
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                            modifier = Modifier.height(36.dp)
                         ) {
-                            Icon(Icons.Default.PhotoCamera, contentDescription = null, modifier = Modifier.size(12.dp), tint = textColor)
-                            Spacer(modifier = Modifier.width(4.dp))
+                            Icon(Icons.Default.AddPhotoAlternate, contentDescription = null, modifier = Modifier.size(16.dp), tint = textColor)
+                            Spacer(modifier = Modifier.width(6.dp))
                             Text("Custom Image", style = MaterialTheme.typography.labelSmall, color = textColor)
                         }
                     }
