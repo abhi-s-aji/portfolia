@@ -35,6 +35,8 @@ sealed class Screen(val route: String, val title: String, val icon: @Composable 
     object Profile : Screen("profile", "Profile", { Icon(Icons.Default.Person, contentDescription = null) })
     object Settings : Screen("settings", "Settings", { Icon(Icons.Default.Settings, contentDescription = null) })
     object AddProject : Screen("add_project", "Add Project", { Icon(Icons.Default.Add, contentDescription = null) })
+    object FeaturesGuide : Screen("features_guide", "Features Guide", { Icon(Icons.Default.HelpOutline, contentDescription = null) })
+    object AboutApp : Screen("about_app", "About Portfolia", { Icon(Icons.Default.Info, contentDescription = null) })
 }
 
 @Composable
@@ -147,7 +149,19 @@ fun MainScreen() {
                         composable(Screen.Settings.route) {
                             SettingsScreen(
                                 settingsDataStore = settingsDataStore,
-                                onEditProfileClick = { navController.navigate("edit_profile") }
+                                onEditProfileClick = { navController.navigate("edit_profile") },
+                                onFeaturesGuideClick = { navController.navigate(Screen.FeaturesGuide.route) },
+                                onAboutAppClick = { navController.navigate(Screen.AboutApp.route) }
+                            )
+                        }
+                        composable(Screen.FeaturesGuide.route) {
+                            FeaturesGuideScreen(
+                                onBackClick = { navController.popBackStack() }
+                            )
+                        }
+                        composable(Screen.AboutApp.route) {
+                            AboutAppScreen(
+                                onBackClick = { navController.popBackStack() }
                             )
                         }
                         composable(Screen.AddProject.route) {

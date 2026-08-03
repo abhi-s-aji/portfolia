@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -39,7 +40,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun SettingsScreen(
     settingsDataStore: SettingsDataStore,
-    onEditProfileClick: () -> Unit
+    onEditProfileClick: () -> Unit,
+    onFeaturesGuideClick: () -> Unit,
+    onAboutAppClick: () -> Unit
 ) {
     val context = LocalContext.current
     val view = LocalView.current
@@ -230,6 +233,69 @@ fun SettingsScreen(
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                                 )
                             }
+                        }
+                    }
+                }
+            }
+
+            // HELP & INFO CARD
+            AppleGlassCard(modifier = Modifier.fillMaxWidth()) {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(
+                        text = "App Guide & Info",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                        color = textColor
+                    )
+                    
+                    // Features Guide
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(if (isDark) Color(0xFF1E1E20) else Color(0xFFFFFFFF))
+                            .border(1.dp, if (isDark) Color(0xFF2A2A2D) else Color(0xFFE5E5EA), RoundedCornerShape(8.dp))
+                            .clickable {
+                                view.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
+                                onFeaturesGuideClick()
+                            }
+                            .padding(14.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text("Features Guide", style = MaterialTheme.typography.titleSmall, color = textColor, fontWeight = FontWeight.SemiBold)
+                                Text("Learn how to use Projects Hub, Dev Vault, and more.", style = MaterialTheme.typography.bodySmall, color = subTextColor)
+                            }
+                            Icon(Icons.Default.KeyboardArrowRight, contentDescription = null, tint = subTextColor)
+                        }
+                    }
+
+                    // About Portfolia
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(if (isDark) Color(0xFF1E1E20) else Color(0xFFFFFFFF))
+                            .border(1.dp, if (isDark) Color(0xFF2A2A2D) else Color(0xFFE5E5EA), RoundedCornerShape(8.dp))
+                            .clickable {
+                                view.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
+                                onAboutAppClick()
+                            }
+                            .padding(14.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text("About Portfolia", style = MaterialTheme.typography.titleSmall, color = textColor, fontWeight = FontWeight.SemiBold)
+                                Text("Identity, system architecture specs, and licenses.", style = MaterialTheme.typography.bodySmall, color = subTextColor)
+                            }
+                            Icon(Icons.Default.KeyboardArrowRight, contentDescription = null, tint = subTextColor)
                         }
                     }
                 }
