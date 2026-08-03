@@ -1,610 +1,726 @@
 # Portfolia
 
-A native Android application developed as an open-source project with an emphasis on maintainability, clear documentation, and long-term evolution.
+> A native Android application for organizing software projects, development resources, secure developer secrets, and professional portfolio assets in a fully offline environment.
+
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+![Platform](https://img.shields.io/badge/Platform-Android-3DDC84)
+![Kotlin](https://img.shields.io/badge/Kotlin-2.0.21-7F52FF)
+![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-Material%203-4285F4)
+![Min SDK](https://img.shields.io/badge/Min%20SDK-24-success)
+![Compile SDK](https://img.shields.io/badge/Compile%20SDK-35-success)
+![Architecture](https://img.shields.io/badge/Architecture-MVVM%20%2B%20Clean-orange)
+![Offline](https://img.shields.io/badge/Offline-First-brightgreen)
+![Status](https://img.shields.io/badge/Status-Active%20Development-blue)
 
 ---
 
 ## Repository Information
 
-| Property | Value |
-|----------|-------|
-| Project | Portfolia |
-| Platform | Android |
-| Type | Native Android Application |
-| Development Status | Active |
-| License | Apache License 2.0 |
-| Repository | Public |
-| Author | Abhi S Aji |
+| Property                  | Value                                                |
+| :------------------------ | :--------------------------------------------------- |
+| **Project**               | Portfolia                                            |
+| **Platform**              | Android                                              |
+| **Application Type**      | Native Android Application                           |
+| **Programming Language**  | Kotlin 2.0.21                                        |
+| **UI Framework**          | Jetpack Compose with Material 3                      |
+| **Architecture**          | Layered MVVM following Clean Architecture principles |
+| **Minimum SDK**           | 24                                                   |
+| **Compile SDK**           | 35                                                   |
+| **Build System**          | Android Gradle Plugin 8.7.3 (Gradle Kotlin DSL)      |
+| **License**               | Apache License 2.0                                   |
+| **Repository Visibility** | Public                                               |
+| **Development Status**    | Active Development                                   |
+| **Maintainer**            | Abhi S Aji                                           |
 
 ### Maintainer
 
-**Abhi S Aji**
-
-- GitHub: https://github.com/abhi-s-aji
-- LinkedIn: https://www.linkedin.com/in/abhi-s-aji-eden
+| Platform     | Profile                                     |
+| :----------- | :------------------------------------------ |
+| **GitHub**   | https://github.com/abhi-s-aji               |
+| **LinkedIn** | https://www.linkedin.com/in/abhi-s-aji-eden |
 
 ---
 
 ## About
 
-Portfolia is an open-source Android application maintained with a documentation-first development approach. Repository documentation is designed to evolve alongside the source code, ensuring that architectural decisions, implementation details, and development practices remain accurate and maintainable over time.
+Portfolia is an open-source native Android application designed to provide a centralized workspace for developers to manage software projects, reusable resources, secure credentials, code snippets, and professional portfolio information within a single offline-first experience.
 
-Undocumented areas are intentionally identified as placeholders rather than assumptions to preserve the accuracy of the documentation.
+The application is built using modern Android development technologies, including Kotlin, Jetpack Compose, Material 3, Room, DataStore, Kotlin Coroutines, and StateFlow. Its architecture follows a layered MVVM approach with Clean Architecture principles, emphasizing maintainability, scalability, and clear separation of responsibilities.
+
+Portfolia operates entirely on-device. All application data is stored locally using Room and DataStore, with no reliance on remote services, analytics platforms, or third-party tracking libraries. The application remains fully functional without an internet connection.
+
+Repository documentation reflects the implemented codebase and is maintained alongside development to ensure technical accuracy, consistency, and long-term maintainability.
 
 ---
 
 ## Repository Principles
 
-This repository follows several guiding principles:
+Development of Portfolia is guided by the following engineering principles:
 
-- Documentation reflects the current implementation.
-- Public documentation does not speculate about future features.
-- Architectural decisions are documented as they become stable.
-- Source code and documentation evolve together.
-- Changes prioritize maintainability and readability.
-- Contributions are expected to follow established project conventions.
+* Documentation reflects the implemented codebase.
+* Features are documented only after implementation.
+* Offline-first architecture by design.
+* Privacy is treated as a default requirement.
+* Security-sensitive operations leverage Android platform security components.
+* Maintainable architecture is preferred over unnecessary complexity.
+* Repository organization and coding conventions remain consistent.
+* Source code and documentation evolve together.
+* Dependencies are selected conservatively and updated deliberately.
+* Long-term maintainability takes precedence over short-term convenience.
 
 ---
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [Philosophy](#philosophy)
-- [Why Portfolia](#why-portfolia)
-- [Core Features](#core-features)
-- [Design Principles](#design-principles)
-- [User Experience](#user-experience)
-- [Application Architecture](#application-architecture)
-- [Project Structure](#project-structure)
-- [Development Setup](#development-setup)
-- [Technology Stack](#technology-stack)
-- [Module Overview](#module-overview)
-- [Data Flow](#data-flow)
-- [Security](#security)
-- [Privacy](#privacy)
-- [Performance](#performance)
-- [Accessibility](#accessibility)
-- [Localization](#localization)
-- [Offline Support](#offline-support)
-- [Development Guidelines](#development-guidelines)
-- [Code Style](#code-style)
-- [Documentation Standards](#documentation-standards)
-- [Contributing](#contributing)
-- [Issue Reporting](#issue-reporting)
-- [Pull Request Guidelines](#pull-request-guidelines)
-- [Branch Strategy](#branch-strategy)
-- [Roadmap](#roadmap)
-- [License](#license)
-- [Author](#author)
+### Introduction
+
+* [Overview](#overview)
+* [Philosophy](#philosophy)
+* [Why Portfolia](#why-portfolia)
+
+### Application
+
+* [Core Features](#core-features)
+* [Technology Stack](#technology-stack)
+* [Application Architecture](#application-architecture)
+* [Project Structure](#project-structure)
+* [Database Overview](#database-overview)
+* [Data Flow](#data-flow)
+
+### Development
+
+* [Development Setup](#development-setup)
+* [Development Guidelines](#development-guidelines)
+* [Code Style](#code-style)
+* [Documentation Standards](#documentation-standards)
+
+### Quality & Security
+
+* [Security](#security)
+* [Privacy](#privacy)
+* [Performance](#performance)
+* [Accessibility](#accessibility)
+* [Localization](#localization)
+* [Offline Support](#offline-support)
+
+### Community
+
+* [Contributing](#contributing)
+* [Issue Reporting](#issue-reporting)
+* [Pull Request Guidelines](#pull-request-guidelines)
+* [Branch Strategy](#branch-strategy)
+
+### Project
+
+* [Roadmap](#roadmap)
+* [License](#license)
+* [Author](#author)
 
 ---
 
 ## Overview
 
-Portfolia is a native Android application developed as an open-source project with a focus on long-term maintainability, transparent development practices, and high-quality documentation.
+Portfolia is an open-source native Android application that provides developers with a centralized workspace for managing software projects, development resources, reusable code snippets, secure credentials, and professional portfolio information.
 
-The repository is maintained using a documentation-first approach, where architectural decisions, implementation details, and project conventions are documented alongside the source code. Documentation is intentionally conservative: functionality is described only after it has been implemented and verified.
+The application is designed around an offline-first architecture, ensuring that all core functionality remains available without an internet connection. Project data, developer profiles, references, snippets, preferences, and secure information are stored locally on the device using Room and DataStore.
 
-This approach ensures that the repository remains a reliable technical reference for contributors and users alike.
+Built with Kotlin and Jetpack Compose, Portfolia follows a layered MVVM architecture with Clean Architecture principles to promote maintainability, scalability, and a clear separation of responsibilities between presentation, business logic, and data persistence.
+
+Repository documentation reflects the current implementation and is maintained alongside the source code to provide an accurate technical reference for contributors and users.
 
 ---
 
 ## Philosophy
 
-Portfolia is guided by a set of engineering principles that prioritize maintainability over complexity.
+Portfolia is developed with an emphasis on long-term maintainability, predictable behavior, and transparent engineering practices.
 
-The project aims to:
+The project follows several core principles:
 
-- Keep implementation details accurately documented.
-- Encourage modular and maintainable source code.
-- Minimize unnecessary complexity.
-- Maintain consistency across the codebase.
-- Document architectural decisions as they evolve.
-- Ensure documentation remains synchronized with implementation.
-- Support collaborative open-source development through clear contribution standards.
+* Offline-first application design.
+* Local ownership of user data.
+* Privacy by default.
+* Maintainable and modular architecture.
+* Clear separation of application layers.
+* Consistent user experience.
+* Documentation that reflects the implemented codebase.
+* Incremental development with measurable improvements.
 
-Undocumented components are intentionally identified as placeholders rather than assumptions, preserving the accuracy and integrity of the repository.
+Technical decisions are made with an emphasis on simplicity, readability, and long-term sustainability rather than unnecessary complexity.
 
 ---
 
 ## Why Portfolia
 
-The primary objective of Portfolia is to provide a well-structured native Android application that can evolve through transparent development and community collaboration.
+Modern developers often rely on multiple applications to manage projects, reusable snippets, reference links, API credentials, and professional portfolio information. Switching between these tools introduces unnecessary fragmentation and context switching.
 
-Rather than documenting intended functionality, this repository documents implemented functionality. Features, architectural decisions, and technical details are introduced into the documentation only after they become part of the project.
+Portfolia consolidates these workflows into a single native Android application while maintaining a fully offline operating model. The application combines project organization, developer resources, secure credential storage, reusable snippets, and portfolio management without requiring cloud synchronization or external services.
 
-This documentation strategy reduces ambiguity, improves maintainability, and helps contributors work from an accurate representation of the codebase.
+By storing application data locally and integrating Android platform capabilities such as Jetpack Compose, Room, DataStore, AndroidX Biometric, and the Storage Access Framework, Portfolia provides a cohesive developer workspace that prioritizes performance, privacy, and reliability.
 
 ---
 
 ## Core Features
 
-The following section documents the application's primary capabilities.
+Portfolia is organized into five primary functional areas, each accessible through the application's bottom navigation.
 
-Features are documented only after they have been implemented and verified. Functionality that has not yet been publicly documented is intentionally represented as a placeholder.
+### Projects Hub
 
-- Placeholder — implementation details will be documented as the project evolves.
-- Placeholder — implementation details will be documented as the project evolves.
-- Placeholder — implementation details will be documented as the project evolves.
-- Placeholder — implementation details will be documented as the project evolves.
-- Placeholder — implementation details will be documented as the project evolves.
+The Projects Hub serves as the central workspace for managing software projects.
 
-As additional functionality becomes available, this section should describe user-facing capabilities together with any relevant implementation notes.
+Key capabilities include:
 
----
-
-## Design Principles
-
-Development of Portfolia is guided by a consistent set of engineering principles intended to support long-term maintainability.
-
-### Maintainability
-
-The project favors solutions that are understandable, well-structured, and straightforward to extend.
-
-### Consistency
-
-Repository structure, naming conventions, documentation, and coding practices should remain consistent throughout the project.
-
-### Separation of Concerns
-
-Application responsibilities should remain clearly separated to improve readability, testing, and future maintenance.
-
-### Incremental Evolution
-
-Architectural and implementation changes should be introduced incrementally, allowing documentation and source code to evolve together.
-
-### Documentation-First Development
-
-Documentation should accurately represent the current implementation. Future functionality should not be described until it becomes part of the project.
-
-### Simplicity
-
-Implementation should prioritize clarity over unnecessary abstraction. Complexity should only be introduced when it provides a measurable benefit.
+* Create and manage software projects.
+* Categorize projects for easier organization.
+* Store project descriptions and technology stacks.
+* Attach live demonstration URLs.
+* Link GitHub repositories.
+* Link LinkedIn project posts.
+* Browse projects using a filterable card-based interface.
+* Persist project information locally using Room Database.
 
 ---
 
-## User Experience
+### References & Snippets
 
-User experience decisions are documented as part of the implementation process.
+A unified workspace for storing developer resources and reusable code.
 
-Current user interface behavior, navigation patterns, accessibility improvements, and interaction guidelines have not yet been formally documented.
+#### Reference Links
 
-Placeholder — implementation details will be documented as the project evolves.
+Organize frequently used resources by storing:
 
-Future revisions of this section may include documentation for:
+* Documentation links
+* Articles
+* Learning resources
+* API references
+* Project resources
+* Categorized bookmarks
+* Group labels
+* Personal notes
 
-- Navigation model
-- Interaction patterns
-- Visual consistency
-- User feedback mechanisms
-- Error handling
-- Accessibility considerations
-- Responsive behavior
-- User workflows
+#### Code Snippets
 
-Only implemented functionality should be documented.
+Store reusable source code with language-aware organization.
 
----
+Supported languages include:
 
-## Application Architecture
+* Kotlin
+* Bash
+* SQL
+* Docker
+* JSON
+* YAML
+* Other
 
-Portfolia is maintained with a layered application structure to encourage clear separation of responsibilities between different parts of the codebase.
+Features include:
 
-The exact implementation of each layer is documented only after it becomes part of the project.
-
-```text
-Presentation
-      ↓
-Domain
-      ↓
-Data
-```
-
-Layer responsibilities are documented incrementally as the project evolves.
-
-Placeholder — implementation details will be documented as the project evolves.
+* Monospaced code rendering.
+* One-tap copy to clipboard.
+* Automatic clipboard cleanup after 30 seconds.
+* Language-based categorization.
+* Optional contextual descriptions.
 
 ---
 
-## Project Structure
+### Developer Secret Vault
 
-The repository is organized to keep application code, documentation, build configuration, and project resources logically separated.
+A secure workspace for managing sensitive development information.
 
-The structure below represents the intended repository layout. Individual directories may evolve as development progresses.
+Capabilities include:
 
-```text
-Portfolia/
-├── app/
-│   ├── src/
-│   │   ├── main/
-│   │   ├── androidTest/
-│   │   └── test/
-│   └── build.gradle
-│
-├── docs/
-│
-├── gradle/
-│
-├── .github/
-│   ├── ISSUE_TEMPLATE/
-│   ├── PULL_REQUEST_TEMPLATE.md
-│   └── workflows/
-│
-├── scripts/
-│
-├── LICENSE
-├── README.md
-├── settings.gradle
-├── build.gradle
-├── gradle.properties
-└── .gitignore
-```
-
-Additional modules and directories should be documented when introduced into the repository.
+* Biometric authentication using Android BiometricPrompt.
+* Android KeyStore integration for authentication.
+* Store API keys.
+* Store environment variables.
+* Store configuration endpoints.
+* Associate secrets with individual projects.
+* Export environment variables as `.env` files.
+* Export secrets as JSON.
+* Base64 encoding for local persistence.
+* Biometric re-authentication before protected export operations.
 
 ---
 
-## Development Setup
+### Developer Profile
 
-### Prerequisites
+A portfolio-oriented developer identity dashboard.
 
-Before working with the project, ensure the following development tools are installed.
+The profile includes:
 
-| Requirement | Status |
-|-------------|--------|
-| Android Studio | Required |
-| Android SDK | Required |
-| JDK | Required |
-| Git | Required |
-| Gradle | Project Managed |
-
-Specific version requirements will be documented as they become part of the project's supported development environment.
-
----
-
-### Clone the Repository
-
-```bash
-git clone https://github.com/abhi-s-aji/Portfolia.git
-cd Portfolia
-```
+* Developer name.
+* Professional title.
+* Biography.
+* Contact information.
+* GitHub profile.
+* LinkedIn profile.
+* Experience summary.
+* Project statistics.
+* Commit statistics.
+* Uptime indicator.
+* Avatar support.
+* QR code generation for profile sharing.
+* Native Android share sheet integration.
 
 ---
 
-### Open the Project
+### Settings
 
-Open the project using Android Studio and allow Gradle to synchronize the project configuration.
+Application configuration and maintenance tools.
 
----
+Available settings include:
 
-### Build
-
-The project can be built using the Gradle Wrapper.
-
-```bash
-./gradlew build
-```
-
-On Windows:
-
-```cmd
-gradlew.bat build
-```
-
----
-
-### Run Tests
-
-If test modules are available, they can be executed using:
-
-```bash
-./gradlew test
-```
-
-Instrumentation tests can be executed with:
-
-```bash
-./gradlew connectedAndroidTest
-```
-
-Test coverage and available test suites will be documented as the project evolves.
-
-Placeholder — implementation details will be documented as the project evolves.
-
----
-
-### Repository Conventions
-
-Contributors are encouraged to:
-
-- Keep commits focused on a single objective.
-- Maintain consistent project organization.
-- Update documentation alongside implementation.
-- Avoid unrelated changes within the same pull request.
-- Preserve repository readability and maintainability.
+* Light theme.
+* Dark theme.
+* System theme.
+* Dynamic accent color selection.
+* JSON database backup.
+* JSON database restoration.
+* Application data reset.
+* Developer contact information.
+* Features Guide.
+* About Portfolia.
 
 ---
 
 ## Technology Stack
 
-Technology choices are documented only after they become part of the project's implementation.
+The following table reflects the technologies currently used by the Portfolia codebase.
 
-| Category | Status |
-|----------|--------|
-| Programming Language | Placeholder — implementation details will be documented as the project evolves. |
-| User Interface | Placeholder — implementation details will be documented as the project evolves. |
-| Architecture | Placeholder — implementation details will be documented as the project evolves. |
-| Dependency Management | Placeholder — implementation details will be documented as the project evolves. |
-| Networking | Placeholder — implementation details will be documented as the project evolves. |
-| Local Storage | Placeholder — implementation details will be documented as the project evolves. |
-| Background Processing | Placeholder — implementation details will be documented as the project evolves. |
-| Image Handling | Placeholder — implementation details will be documented as the project evolves. |
-| Logging | Placeholder — implementation details will be documented as the project evolves. |
-| Testing | Placeholder — implementation details will be documented as the project evolves. |
-| Static Analysis | Placeholder — implementation details will be documented as the project evolves. |
-| Build System | Gradle |
-| Version Control | Git |
-
-Only technologies that are part of the repository should be documented here.
+| Category                  | Implementation                                                         |
+| :------------------------ | :--------------------------------------------------------------------- |
+| **Programming Language**  | Kotlin 2.0.21                                                          |
+| **UI Framework**          | Jetpack Compose with Material 3 Design (BOM 2024.12.01)                |
+| **Architecture Pattern**  | Layered MVVM with Clean Architecture principles                        |
+| **State Management**      | Kotlin StateFlow with `collectAsState()`                               |
+| **Navigation**            | Navigation Compose 2.8.5                                               |
+| **Local Database**        | Room 2.6.1                                                             |
+| **User Preferences**      | DataStore Preferences 1.1.1                                            |
+| **Lifecycle**             | `lifecycle-viewmodel-compose` 2.8.7, `lifecycle-runtime-compose` 2.8.7 |
+| **Background Processing** | Kotlin Coroutines                                                      |
+| **Image Loading**         | Coil Compose 2.7.0                                                     |
+| **QR Code Generation**    | ZXing Core 3.5.3                                                       |
+| **Serialization**         | Gson 2.11.0                                                            |
+| **Browser Integration**   | AndroidX Browser 1.8.0                                                 |
+| **Biometric Security**    | AndroidX Biometric 1.1.0                                               |
+| **Icon Library**          | Material Icons Extended (BOM managed)                                  |
+| **Annotation Processing** | Kotlin KAPT                                                            |
+| **Build System**          | Gradle with Kotlin DSL (`build.gradle.kts`)                            |
+| **Android Gradle Plugin** | 8.7.3                                                                  |
+| **JVM Target**            | 17 (built locally using JDK 21)                                        |
+| **Minimum SDK**           | Android 7.0 (API 24)                                                   |
+| **Compile SDK**           | Android 15 (API 35)                                                    |
+| **Networking**            | None — Fully Offline Architecture                                      |
+| **Analytics**             | None — No telemetry, analytics, or tracking SDKs                       |
+| **Version Control**       | Git                                                                    |
 
 ---
 
-## Module Overview
+## Application Architecture
 
-Repository modules are documented after they become part of the implementation.
+Portfolia follows a layered MVVM architecture with clear separation between presentation, business logic, and persistence. The architecture is designed to keep UI rendering independent from data management while supporting a reactive user experience.
 
-| Module | Responsibility |
-|---------|----------------|
-| `app` | Android application entry point. |
-| Additional modules | Placeholder — implementation details will be documented as the project evolves. |
+### High-Level Architecture
 
-As the project grows, this section should describe the purpose and responsibilities of each module together with any important architectural relationships.
+```text
+Presentation
+      │
+      ▼
+Domain
+      │
+      ▼
+Data
+```
+
+### Presentation Layer
+
+Responsible for rendering the user interface and handling user interactions.
+
+Components include:
+
+* Jetpack Compose screens
+* Reusable UI components
+* Navigation graph
+* Material 3 theming
+* StateFlow collection using `collectAsState()`
+* Animated screen transitions using `tween(220)` and `FastOutSlowInEasing`
+
+---
+
+### Domain Layer
+
+The domain layer contains application logic responsible for transforming persistent entities into UI-friendly state representations.
+
+Responsibilities include:
+
+* Business logic
+* Reactive state transformation
+* ViewModel coordination
+* UI state management
+
+---
+
+### Data Layer
+
+The data layer manages all local persistence.
+
+Primary components include:
+
+* Room Database (`portfolia_db`)
+* Room DAOs
+* Room Entities
+* DataStore Preferences
+* TypeConverters
+* Local repository implementations
+
+No remote data sources or cloud synchronization are used.
+
+---
+
+## Project Structure
+
+The repository is organized to separate user interface components, persistence, navigation, theming, and reusable resources.
+
+```text
+Portfolia/
+├── app/
+│   ├── src/
+│   │   └── main/
+│   │       ├── java/
+│   │       │   ├── ui/
+│   │       │   │   ├── screens/
+│   │       │   │   ├── components/
+│   │       │   │   ├── navigation/
+│   │       │   │   └── theme/
+│   │       │   │
+│   │       │   ├── data/
+│   │       │   │   ├── dao/
+│   │       │   │   ├── entities/
+│   │       │   │   ├── datastore/
+│   │       │   │   ├── converters/
+│   │       │   │   └── database/
+│   │       │   │
+│   │       │   └── viewmodel/
+│   │       │
+│   │       ├── res/
+│   │       └── AndroidManifest.xml
+│   │
+│   ├── build.gradle.kts
+│   └── proguard-rules.pro
+│
+├── gradle/
+├── build.gradle.kts
+├── settings.gradle.kts
+├── gradle.properties
+├── LICENSE
+└── README.md
+```
+
+The project structure is organized to encourage modularity, maintainability, and a clear separation of responsibilities across the application.
+
+---
+
+## Database Overview
+
+Portfolia persists all application data locally using Room Database.
+
+| Property                | Value                                                     |
+| :---------------------- | :-------------------------------------------------------- |
+| **Database Name**       | `portfolia_db`                                            |
+| **Database Version**    | 6                                                         |
+| **ORM**                 | Room 2.6.1                                                |
+| **Migration Strategy**  | `fallbackToDestructiveMigration()` *(development builds)* |
+| **Preferences Storage** | DataStore Preferences                                     |
+| **Type Converters**     | `Converters.kt` (`List<String>` serialization)            |
+
+### Active Entities
+
+| Entity            | Purpose                                  |
+| :---------------- | :--------------------------------------- |
+| `projects`        | Stores software project information.     |
+| `user_profile`    | Stores developer profile information.    |
+| `reference_links` | Stores categorized developer resources.  |
+| `dev_secrets`     | Stores Base64-encoded developer secrets. |
+| `code_snippets`   | Stores reusable source code snippets.    |
+
+A detailed schema reference for each entity, DAO, and migration strategy is maintained alongside the source code as the project evolves.
 
 ---
 
 ## Data Flow
 
-The project follows a structured flow of information between application layers.
+Portfolia follows a unidirectional data flow built on Kotlin Coroutines, StateFlow, Room, and Jetpack Compose. User interactions propagate through the presentation layer, business logic is processed within ViewModels, and persistent data is managed locally through Room and DataStore.
 
-```text
+### Application Data Flow
+
+```text id="uwu5qm"
 User Interaction
         │
         ▼
-Presentation Layer
+Jetpack Compose UI
+        │
+        ▼
+AndroidViewModel
+        │
+        ▼
+StateFlow
         │
         ▼
 Business Logic
         │
         ▼
-Data Layer
+Room DAO / DataStore
         │
         ▼
-Data Source
+Room Database
         │
         ▼
-Application State
+Reactive State Update
         │
         ▼
-User Interface
+Compose Recomposition
 ```
 
-The diagram above illustrates a conceptual flow only.
+### Flow Description
 
-Concrete implementation details—including repositories, services, local storage, remote communication, caching, synchronization, or state management—are intentionally omitted until they become part of the documented implementation.
+1. User actions originate from Jetpack Compose screens.
+2. Events are forwarded to the appropriate `AndroidViewModel`.
+3. ViewModels execute application logic and coordinate persistence.
+4. Room DAOs perform database operations against `portfolia_db`.
+5. DataStore manages application preferences such as theme mode and accent color.
+6. Updated state is emitted through `StateFlow`.
+7. Compose observes state using `collectAsState()`, triggering automatic recomposition when data changes.
 
-Placeholder — implementation details will be documented as the project evolves.
-
----
-
-## Documentation Notes
-
-To preserve documentation accuracy:
-
-- Document only implemented functionality.
-- Avoid describing planned features as completed work.
-- Keep architectural documentation synchronized with the source code.
-- Update this section whenever new modules or technologies are introduced.
-- Replace placeholders only after implementation has been merged into the main branch.
+This architecture provides a predictable, reactive programming model while maintaining a clear separation between UI rendering and persistent data management.
 
 ---
 
-## Security
+## Development Setup
 
-Security is considered throughout the development lifecycle of Portfolia.
+### Requirements
 
-To maintain the accuracy of this documentation, repository security mechanisms are described only after they have been implemented and reviewed.
+| Requirement           | Version                     |
+| :-------------------- | :-------------------------- |
+| Android Studio        | Ladybug (2024.2.1) or newer |
+| JDK                   | 17                          |
+| Kotlin                | 2.0.21                      |
+| Android Gradle Plugin | 8.7.3                       |
+| Compile SDK           | 35                          |
+| Minimum SDK           | 24                          |
+| Gradle                | Wrapper Managed             |
+| Git                   | Latest Stable               |
 
-Current implementation details are intentionally omitted.
+### Clone the Repository
 
-Placeholder — implementation details will be documented as the project evolves.
+```bash
+git clone https://github.com/abhi-s-aji/portfolia.git
+cd portfolia
+```
 
-### Security Principles
+### Open the Project
 
-The project aims to follow these general practices:
+Open the project in Android Studio and allow Gradle to complete project synchronization.
 
-- Apply secure development practices throughout implementation.
-- Minimize unnecessary exposure of sensitive information.
-- Keep third-party dependencies under review.
-- Document security-relevant changes alongside implementation.
-- Encourage responsible disclosure of security issues.
+### Build the Project
 
-Implementation-specific details, including authentication, authorization, secure storage, certificate handling, encryption, network security, or credential management, will be documented only after they become part of the project.
+```bash
+./gradlew assembleDebug
+```
 
----
+### Install on a Connected Device
 
-## Privacy
+```bash
+./gradlew installDebug
+```
 
-Portfolia is intended to respect user privacy and minimize unnecessary data collection.
+### Run Static Analysis
 
-Repository documentation will accurately describe any collection, processing, storage, or transmission of user information only after those capabilities are implemented.
+```bash
+./gradlew lint
+```
 
-Placeholder — implementation details will be documented as the project evolves.
-
-Future revisions may document topics such as:
-
-- Data collection
-- Data retention
-- User consent
-- Local data storage
-- Remote communication
-- Privacy controls
-
-Documentation should always reflect the current implementation.
-
----
-
-## Performance
-
-Performance improvements should be measurable, documented, and supported by implementation.
-
-Optimization decisions should prioritize:
-
-- Responsiveness
-- Resource efficiency
-- Maintainability
-- Predictable behavior
-
-Current performance characteristics have not yet been formally documented.
-
-Placeholder — implementation details will be documented as the project evolves.
-
----
-
-## Accessibility
-
-Accessibility is considered an essential aspect of application quality.
-
-Accessibility-related behavior should be evaluated and documented as implementation progresses.
-
-Potential documentation areas include:
-
-- Screen reader compatibility
-- Keyboard navigation
-- Touch target sizing
-- Color contrast
-- Scalable text
-- Content descriptions
-- Accessible navigation
-
-Placeholder — implementation details will be documented as the project evolves.
-
----
-
-## Localization
-
-Localization support has not yet been formally documented.
-
-Placeholder — implementation details will be documented as the project evolves.
-
-When localization becomes available, this section should include information about:
-
-- Supported languages
-- Resource organization
-- Translation workflow
-- Locale-specific behavior
-- Contribution guidelines for translations
-
----
-
-## Offline Support
-
-Offline capabilities have not yet been documented.
-
-Placeholder — implementation details will be documented as the project evolves.
-
-Future documentation may describe:
-
-- Local persistence
-- Synchronization behavior
-- Cache management
-- Conflict resolution
-- Offline-first considerations
-
-Only implemented functionality should be documented.
+The project targets JVM 17 while being compiled locally using JDK 21. Android Studio automatically uses the Gradle Wrapper configuration provided by the repository.
 
 ---
 
 ## Development Guidelines
 
-Contributors are expected to preserve the consistency, readability, and maintainability of the project.
+The project follows a documentation-first and maintainability-focused development process.
 
-### General Principles
+General expectations include:
 
-- Keep changes focused on a single objective.
-- Prefer small, reviewable pull requests.
-- Avoid unrelated modifications within the same contribution.
-- Keep documentation synchronized with implementation.
-- Preserve backward compatibility where practical.
-- Remove unused code instead of leaving commented sections.
-- Favor readability over unnecessary abstraction.
+* Keep changes focused on a single objective.
+* Prefer small, reviewable pull requests.
+* Maintain a clear separation of responsibilities.
+* Keep documentation synchronized with implementation.
+* Remove unused code rather than leaving commented sections.
+* Avoid introducing undocumented behavior.
+* Use descriptive names for classes, functions, variables, and resources.
+* Keep dependencies to the minimum required.
 
-### Repository Practices
-
-- Write descriptive commit messages.
-- Keep the project structure organized.
-- Use meaningful names for files, classes, methods, and variables.
-- Document public APIs where appropriate.
-- Avoid introducing undocumented behavior.
-- Keep dependencies to the minimum required.
+Repository changes should improve readability, maintainability, and long-term stability.
 
 ---
 
 ## Code Style
 
-The project follows established Android development conventions.
+Portfolia follows established Android development conventions.
 
-### Primary References
+Primary references include:
 
-- Kotlin Coding Conventions
-- Android Style Guide
+* Kotlin Coding Conventions
+* Android Developers Style Guide
+* Jetpack Compose API Guidelines
 
-### General Expectations
+General expectations:
 
-Source code should be:
+* Prefer immutable data where practical.
+* Keep composables focused on a single responsibility.
+* Write self-explanatory code before relying on comments.
+* Use meaningful naming throughout the project.
+* Keep files reasonably sized and logically organized.
+* Maintain consistent formatting across the repository.
 
-- Consistent
-- Readable
-- Well-structured
-- Self-explanatory where possible
-- Easy to maintain
-
-Contributors are encouraged to:
-
-- Use descriptive naming.
-- Keep functions focused on a single responsibility.
-- Minimize deeply nested logic.
-- Prefer immutable data where practical.
-- Remove dead or unused code.
-- Keep files reasonably sized.
-
-Formatting should remain consistent throughout the repository.
+Consistency is prioritized over personal formatting preferences.
 
 ---
 
 ## Documentation Standards
 
-Documentation is considered part of the source code and should evolve alongside implementation.
+Documentation is maintained alongside the source code to ensure technical accuracy.
 
-### Documentation Principles
+Documentation should:
 
-- Document implemented behavior only.
-- Avoid speculative documentation.
-- Keep documentation concise and technically accurate.
-- Update documentation within the same change whenever practical.
-- Prefer clarity over verbosity.
-- Use consistent terminology across the repository.
+* Reflect the current implementation.
+* Avoid speculative or future-facing descriptions.
+* Remain concise and technically precise.
+* Be updated as part of implementation changes.
+* Use consistent terminology throughout the repository.
 
-### README Guidelines
+Repository documentation is considered part of the project and is reviewed alongside source code changes.
 
-The README should describe:
+---
 
-- Repository purpose
-- Project organization
-- Development workflow
-- Contribution process
-- Publicly documented functionality
+## Security
 
-Implementation-specific details should only be added after they become part of the project.
+Portfolia follows a local-first security model and leverages Android platform security components to protect sensitive developer information.
+
+### Biometric Authentication
+
+The Developer Secret Vault is protected using AndroidX Biometric (`androidx.biometric:biometric:1.1.0`).
+
+Authentication is automatically requested:
+
+* When entering the Developer Secret Vault.
+* Before exporting environment variables as `.env` files.
+* Before copying JSON exports containing sensitive data.
+
+The application supports:
+
+* `BIOMETRIC_STRONG`
+* `DEVICE_CREDENTIAL` fallback
+
+`BiometricManager.canAuthenticate()` is used to determine device capability before displaying the authentication prompt.
+
+### Secret Storage
+
+Developer secrets are Base64-encoded before being persisted within the local Room database.
+
+Current implementation provides local obfuscation of sensitive values.
+
+Future iterations may introduce native encryption backed by Android KeyStore for additional protection.
+
+### Clipboard Hygiene
+
+Sensitive content copied from the Secret Vault or Code Snippets is automatically removed from the system clipboard after approximately 30 seconds.
+
+Clipboard cleanup is performed using Kotlin Coroutines with clipboard content verification before clearing.
+
+### Security Principles
+
+Portfolia is developed with the following security objectives:
+
+* Minimize exposure of sensitive information.
+* Authenticate privileged operations.
+* Store application data locally.
+* Avoid unnecessary external dependencies.
+* Document security-relevant implementation changes.
+
+---
+
+## Privacy
+
+Portfolia follows a local-first privacy model.
+
+Application data remains on the user's device unless the user explicitly chooses to export it.
+
+The application:
+
+* Does not transmit user data.
+* Does not include analytics SDKs.
+* Does not include advertising SDKs.
+* Does not include crash reporting services.
+* Does not perform background synchronization.
+* Does not depend on cloud services.
+
+Projects, references, code snippets, developer profiles, secrets, and preferences are stored locally using Room Database and DataStore.
+
+Export operations use the Android Storage Access Framework, allowing users to choose the destination for exported files.
+
+---
+
+## Performance
+
+Portfolia is designed around local data access and reactive state management to provide a responsive user experience.
+
+Current implementation emphasizes:
+
+* Jetpack Compose rendering.
+* Reactive StateFlow updates.
+* Local Room persistence.
+* Kotlin Coroutines for asynchronous work.
+* Efficient Compose recomposition.
+
+Because the application does not perform network requests, core functionality remains available without network latency.
+
+---
+
+## Accessibility
+
+Accessibility is considered during application development.
+
+Current implementation follows standard Android accessibility practices where applicable, including:
+
+* Material 3 components.
+* Platform text scaling support.
+* Native Android interaction patterns.
+
+Accessibility improvements will continue as the project evolves.
+
+---
+
+## Localization
+
+The current implementation targets English.
+
+Additional language support may be introduced in future revisions as localization resources become available.
+
+---
+
+## Offline Support
+
+Portfolia is designed as a fully offline application.
+
+All primary functionality operates without an internet connection, including:
+
+* Project management
+* Reference links
+* Code snippets
+* Developer Secret Vault
+* Developer profile
+* QR code generation
+* Settings and preferences
+* Local backup and restore
+
+The application does not require network connectivity for normal operation and declares no networking dependencies for its core features.
 
 ---
 
@@ -612,130 +728,98 @@ Implementation-specific details should only be added after they become part of t
 
 Contributions are welcome.
 
-Before contributing, please ensure that your changes align with the project's coding standards and documentation practices.
+Before submitting changes:
 
-### Contribution Workflow
+* Fork the repository.
+* Create a dedicated branch.
+* Keep changes focused and well-scoped.
+* Update documentation when implementation changes.
+* Verify the project builds successfully.
+* Submit a pull request for review.
 
-1. Fork the repository.
-2. Create a dedicated branch.
-3. Implement the proposed changes.
-4. Update documentation where applicable.
-5. Verify that the project builds successfully.
-6. Submit a pull request for review.
-
-Maintainers may request revisions before merging changes.
+Repository maintainers may request revisions before merging.
 
 ---
 
 ## Issue Reporting
 
-Issues help improve the project by identifying defects, proposing enhancements, or requesting documentation improvements.
+GitHub Issues are used for bug reports, feature requests, and documentation improvements.
 
-When creating an issue, include as much relevant information as possible.
+When opening an issue, include:
 
-### Recommended Information
+* A clear summary.
+* Steps to reproduce.
+* Expected behavior.
+* Actual behavior.
+* Environment information.
+* Relevant screenshots or logs, when applicable.
 
-- Summary
-- Expected behavior
-- Actual behavior
-- Steps to reproduce
-- Environment information
-- Screenshots (if applicable)
-- Relevant logs (if applicable)
-
-Before opening a new issue, search existing discussions to avoid duplicate reports.
+Please search existing issues before creating a new report.
 
 ---
 
 ## Pull Request Guidelines
 
-Pull requests should be focused, well-documented, and easy to review.
+Pull requests should remain focused, readable, and easy to review.
 
-### Before Submitting
+Before submitting:
 
-- Ensure the project builds successfully.
-- Update relevant documentation.
-- Remove debugging code.
-- Remove unused imports.
-- Keep commits organized.
-- Resolve review feedback before requesting another review.
+* Ensure the project builds successfully.
+* Remove debugging code.
+* Remove unused imports.
+* Update documentation where necessary.
+* Keep commits logically organized.
 
-### Review Expectations
+Reviews focus on:
 
-Pull requests may be reviewed for:
-
-- Correctness
-- Readability
-- Maintainability
-- Documentation quality
-- Repository consistency
-
-Approval does not guarantee immediate merging. Maintainers may request additional revisions when necessary.
+* Correctness
+* Readability
+* Maintainability
+* Documentation quality
+* Repository consistency
 
 ---
 
 ## Branch Strategy
 
-The repository follows a structured branching model to support ongoing development and maintenance.
-
-| Branch | Purpose |
-|---------|---------|
-| `main` | Stable production-ready source. |
-| `develop` | Primary integration branch for active development. |
-| `feature/*` | Development of new features. |
-| `fix/*` | Non-critical bug fixes. |
-| `release/*` | Release preparation and stabilization. |
-| `hotfix/*` | Critical fixes for production releases. |
-
-Branch naming should remain descriptive and follow the conventions above.
+| Branch      | Purpose                    |
+| ----------- | -------------------------- |
+| `main`      | Stable production branch   |
+| `develop`   | Primary development branch |
+| `feature/*` | New features               |
+| `fix/*`     | Bug fixes                  |
+| `release/*` | Release preparation        |
+| `hotfix/*`  | Production hotfixes        |
 
 ---
 
 ## Roadmap
 
-The roadmap represents areas of planned improvement. Items are intentionally generic and should be updated as implementation progresses.
+The roadmap reflects areas of ongoing development.
 
-- [ ] Expand project documentation
-- [ ] Improve architectural documentation
-- [ ] Introduce additional project modules
-- [ ] Expand automated test coverage
-- [ ] Improve accessibility support
-- [ ] Add localization support
-- [ ] Improve offline capabilities
-- [ ] Enhance developer documentation
-- [ ] Improve project maintainability
-- [ ] Continue incremental refactoring where appropriate
-
-Roadmap items do not imply completed functionality and should be updated as the project evolves.
+* [ ] Expand project documentation.
+* [ ] Improve architecture documentation.
+* [ ] Enhance backup and restore capabilities.
+* [ ] Continue accessibility improvements.
+* [ ] Expand localization support.
+* [ ] Introduce comprehensive automated testing.
+* [ ] Continue performance optimizations.
+* [ ] Strengthen local data protection mechanisms.
+* [ ] Improve long-term maintainability.
 
 ---
 
 ## License
 
-Portfolia is licensed under the **Apache License, Version 2.0**.
+Portfolia is licensed under the Apache License, Version 2.0.
 
-```
-Copyright 2026 Abhi S Aji
+See the LICENSE file for the complete license text.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+### Source File Header
 
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-```
-
-Every new source file should include the Apache 2.0 license header where appropriate.
-
-### Example Source Header
-
-```kotlin
 /*
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Copyright 2026 Abhi S Aji
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -750,9 +834,6 @@ Every new source file should include the Apache 2.0 license header where appropr
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-```
-
-For the complete license text, see the `LICENSE` file included in this repository.
 
 ---
 
@@ -762,22 +843,11 @@ For the complete license text, see the `LICENSE` file included in this repositor
 
 Maintainer of the Portfolia project.
 
-| Platform | Link |
-|----------|------|
-| GitHub | https://github.com/abhi-s-aji |
-| LinkedIn | https://www.linkedin.com/in/abhi-s-aji-eden |
-
----
-
-## Acknowledgements
-
-Portfolia is maintained as an open-source project.
-
-Contributions, issue reports, documentation improvements, and constructive feedback are welcome and help improve the project over time.
+* GitHub: https://github.com/abhi-s-aji
+* LinkedIn: https://www.linkedin.com/in/abhi-s-aji-eden
 
 ---
 
 © 2026 Abhi S Aji
 
 Licensed under the Apache License, Version 2.0.
-
