@@ -31,6 +31,7 @@ import com.example.portfolia.ui.theme.PortfoliaTheme
 sealed class Screen(val route: String, val title: String, val icon: @Composable () -> Unit) {
     object Projects : Screen("projects", "Projects", { Icon(Icons.Default.Folder, contentDescription = null) })
     object References : Screen("references", "Links", { Icon(Icons.Default.Bookmark, contentDescription = null) })
+    object Vault : Screen("vault", "Vault", { Icon(Icons.Default.Lock, contentDescription = null) })
     object Profile : Screen("profile", "Profile", { Icon(Icons.Default.Person, contentDescription = null) })
     object Settings : Screen("settings", "Settings", { Icon(Icons.Default.Settings, contentDescription = null) })
     object AddProject : Screen("add_project", "Add Project", { Icon(Icons.Default.Add, contentDescription = null) })
@@ -52,6 +53,7 @@ fun MainScreen() {
     val bottomBarScreens = listOf(
         Screen.Projects,
         Screen.References,
+        Screen.Vault,
         Screen.Profile,
         Screen.Settings
     )
@@ -132,6 +134,9 @@ fun MainScreen() {
                             ReferencesScreen(
                                 accent = currentAccent
                             )
+                        }
+                        composable(Screen.Vault.route) {
+                            VaultScreen()
                         }
                         composable(Screen.Profile.route) {
                             ProfileScreen(

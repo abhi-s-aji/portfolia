@@ -7,8 +7,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [ProjectEntity::class, UserProfileEntity::class, ReferenceEntity::class],
-    version = 4,
+    entities = [ProjectEntity::class, UserProfileEntity::class, ReferenceEntity::class, DevSecretEntity::class],
+    version = 5,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -16,6 +16,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun projectDao(): ProjectDao
     abstract fun profileDao(): ProfileDao
     abstract fun referenceDao(): ReferenceDao
+    abstract fun secretDao(): SecretDao
 
     companion object {
         @Volatile
