@@ -2,6 +2,7 @@ package com.example.portfolia.ui.navigation
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -154,12 +155,48 @@ fun MainScreen() {
                                 onAboutAppClick = { navController.navigate(Screen.AboutApp.route) }
                             )
                         }
-                        composable(Screen.FeaturesGuide.route) {
+                        composable(
+                            route = Screen.FeaturesGuide.route,
+                            enterTransition = {
+                                fadeIn(animationSpec = tween(220, easing = FastOutSlowInEasing)) +
+                                        slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(220, easing = FastOutSlowInEasing))
+                            },
+                            exitTransition = {
+                                fadeOut(animationSpec = tween(220, easing = FastOutSlowInEasing)) +
+                                        slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(220, easing = FastOutSlowInEasing))
+                            },
+                            popEnterTransition = {
+                                fadeIn(animationSpec = tween(220, easing = FastOutSlowInEasing)) +
+                                        slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(220, easing = FastOutSlowInEasing))
+                            },
+                            popExitTransition = {
+                                fadeOut(animationSpec = tween(220, easing = FastOutSlowInEasing)) +
+                                        slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(220, easing = FastOutSlowInEasing))
+                            }
+                        ) {
                             FeaturesGuideScreen(
                                 onBackClick = { navController.popBackStack() }
                             )
                         }
-                        composable(Screen.AboutApp.route) {
+                        composable(
+                            route = Screen.AboutApp.route,
+                            enterTransition = {
+                                fadeIn(animationSpec = tween(220, easing = FastOutSlowInEasing)) +
+                                        slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(220, easing = FastOutSlowInEasing))
+                            },
+                            exitTransition = {
+                                fadeOut(animationSpec = tween(220, easing = FastOutSlowInEasing)) +
+                                        slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(220, easing = FastOutSlowInEasing))
+                            },
+                            popEnterTransition = {
+                                fadeIn(animationSpec = tween(220, easing = FastOutSlowInEasing)) +
+                                        slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(220, easing = FastOutSlowInEasing))
+                            },
+                            popExitTransition = {
+                                fadeOut(animationSpec = tween(220, easing = FastOutSlowInEasing)) +
+                                        slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(220, easing = FastOutSlowInEasing))
+                            }
+                        ) {
                             AboutAppScreen(
                                 onBackClick = { navController.popBackStack() }
                             )

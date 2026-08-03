@@ -1,6 +1,8 @@
 package com.example.portfolia.ui.screens
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -123,6 +125,12 @@ fun ExpandableFeatureCard(
             .clip(RoundedCornerShape(16.dp))
             .background(cardBg)
             .border(1.dp, borderColor, RoundedCornerShape(16.dp))
+            .animateContentSize(
+                animationSpec = tween(
+                    durationMillis = 250,
+                    easing = FastOutSlowInEasing
+                )
+            )
             .clickable { expanded = !expanded }
             .padding(16.dp)
     ) {
@@ -152,11 +160,7 @@ fun ExpandableFeatureCard(
                 color = subTextColor
             )
 
-            AnimatedVisibility(
-                visible = expanded,
-                enter = expandVertically() + fadeIn(),
-                exit = shrinkVertically() + fadeOut()
-            ) {
+            if (expanded) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

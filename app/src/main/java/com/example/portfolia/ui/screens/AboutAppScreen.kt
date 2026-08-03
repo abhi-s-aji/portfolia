@@ -1,5 +1,7 @@
 package com.example.portfolia.ui.screens
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -8,7 +10,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -42,7 +45,7 @@ fun AboutAppScreen(
                 title = { Text("About Portfolia", fontWeight = FontWeight.Bold, color = textColor) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = textColor)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = textColor)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
@@ -157,6 +160,59 @@ fun AboutAppScreen(
                 }
             }
 
+            // Feedback & Support Card
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(cardBg)
+                    .border(1.dp, borderColor, RoundedCornerShape(16.dp))
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "Feedback & Support",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = textColor
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = borderColor)
+
+                    FeedbackItemRow(
+                        title = "Email Feedback",
+                        subtitle = "abhisaji.dev@gmail.com",
+                        textColor = textColor,
+                        subTextColor = subTextColor,
+                        borderColor = borderColor,
+                        onClick = {
+                            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                data = Uri.parse("mailto:abhisaji.dev@gmail.com")
+                                putExtra(Intent.EXTRA_SUBJECT, "Portfolia Feedback v1.2.0")
+                            }
+                            context.startActivity(intent)
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+                    HorizontalDivider(color = borderColor)
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    FeedbackItemRow(
+                        title = "GitHub Issues",
+                        subtitle = "Submit bug reports or suggest new features",
+                        textColor = textColor,
+                        subTextColor = subTextColor,
+                        borderColor = borderColor,
+                        onClick = {
+                            val intent = Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse("https://github.com/abhi-s-aji/portfolia/issues/new/choose")
+                            )
+                            context.startActivity(intent)
+                        }
+                    )
+                }
+            }
+
             Spacer(modifier = Modifier.height(24.dp))
         }
     }
@@ -180,6 +236,45 @@ fun SpecRow(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
             color = subTextColor
+        )
+    }
+}
+
+@Composable
+fun FeedbackItemRow(
+    title: String,
+    subtitle: String,
+    textColor: Color,
+    subTextColor: Color,
+    borderColor: Color,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = textColor
+            )
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = subTextColor
+            )
+        }
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.OpenInNew,
+            contentDescription = title,
+            tint = subTextColor,
+            modifier = Modifier.size(18.dp)
         )
     }
 }
